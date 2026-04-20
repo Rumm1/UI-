@@ -346,8 +346,8 @@ export function AppointmentsPage() {
         {selectedPatientFromContext ? (
           <div className="mb-6 flex flex-col gap-3 rounded-3xl border border-border bg-card p-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm font-medium text-foreground">Контекст пациента: {selectedPatientFromContext.fullName}</p>
-              <p className="text-sm text-muted-foreground">Новая запись будет предзаполнена этим пациентом. Можно сразу перейти в профиль или создать медкарту после приема.</p>
+              <p className="text-[13px] font-medium text-foreground">Контекст пациента: {selectedPatientFromContext.fullName}</p>
+              <p className="text-[13px] text-muted-foreground">Новая запись будет предзаполнена этим пациентом. Можно сразу перейти в профиль или создать медкарту после приема.</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button variant="outline" className="rounded-2xl" onClick={() => navigate(`/patients?patient=${selectedPatientFromContext.id}`)}>Профиль пациента</Button>
@@ -356,8 +356,28 @@ export function AppointmentsPage() {
           </div>
         ) : null}
 
-        <div className="mb-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {summaryCards.map((item) => <button key={item.label} onClick={item.onClick} className="rounded-3xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg"><div className={`mb-3 flex size-12 items-center justify-center rounded-2xl ${item.tone}`}><CalendarDays className="size-5" /></div><p className="text-sm text-muted-foreground">{item.label}</p><p className="text-3xl font-semibold text-foreground">{item.value}</p></button>)}
+        <div className="mb-6 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {summaryCards.map((item) => (
+            <button
+              key={item.label}
+              onClick={item.onClick}
+              className="font-medical-display flex h-[62px] items-center justify-between gap-3 rounded-[10px] border border-border bg-card px-4 py-3 text-left transition-colors hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <div
+                  className={`flex size-9 shrink-0 items-center justify-center rounded-[10px] ${item.tone}`}
+                >
+                  <CalendarDays className="size-4" />
+                </div>
+                <p className="truncate text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                  {item.label}
+                </p>
+              </div>
+              <p className="shrink-0 text-[24px] font-semibold leading-none text-foreground">
+                {item.value}
+              </p>
+            </button>
+          ))}
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.45fr_1fr]">
@@ -401,7 +421,7 @@ export function AppointmentsPage() {
                     <button
                       key={date.toISOString()}
                       onClick={() => focusDate(date, "day")}
-                      className={`min-w-[108px] rounded-[10px] border px-4 py-3 text-left transition-all duration-200 ease-out ${
+                      className={`min-w-[108px] rounded-[10px] border px-4 py-2.5 text-left transition-all duration-200 ease-out ${
                         isActiveDate
                           ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10"
                           : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.05] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
@@ -410,10 +430,10 @@ export function AppointmentsPage() {
                       <p className={`text-[11px] uppercase tracking-[0.18em] ${isTodayDate ? "text-sky-700 dark:text-sky-300" : "text-muted-foreground"}`}>
                         {format(date, "EE", { locale: ru })}
                       </p>
-                      <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
+                      <p className="mt-1.5 text-[22px] font-semibold tabular-nums leading-none text-foreground">
                         {format(date, "dd", { locale: ru })}
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground">
+                      <p className="mt-1 text-[11px] text-muted-foreground">
                         {dailyCount > 0 ? `${dailyCount} запис.` : "Нет записей"}
                       </p>
                     </button>
@@ -461,15 +481,21 @@ export function AppointmentsPage() {
               </div>
             </div>
 
-            <div className="grid gap-2 grid-cols-[88px_1fr]">
+            <div className="grid grid-cols-[80px_1fr] gap-2">
               <div />
-              <div className={`rounded-[10px] border px-4 py-3 text-center ${isSameDay(currentDate, new Date()) ? "border-sky-300/55 bg-sky-500/10 text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50" : "border-transparent bg-muted text-foreground"}`}>
-                <p className="text-xs uppercase tracking-[0.18em]">{format(currentDate, "EEEE", { locale: ru })}</p>
-                <p className="mt-1 text-2xl font-semibold tabular-nums">{format(currentDate, "dd", { locale: ru })}</p>
+              <div
+                className={`border-b px-4 pb-2.5 text-center ${
+                  isSameDay(currentDate, new Date())
+                    ? "border-sky-300/55 text-sky-900 dark:border-sky-400/25 dark:text-sky-50"
+                    : "border-border text-foreground"
+                }`}
+              >
+                <p className="text-[11px] uppercase tracking-[0.18em] text-muted-foreground">{format(currentDate, "EEEE", { locale: ru })}</p>
+                <p className="font-medical-display mt-1 text-[22px] font-semibold leading-none">{format(currentDate, "dd", { locale: ru })}</p>
               </div>
               {timeSlots.map((slot) => (
                 <div key={slot} className="contents">
-                  <div key={`${slot}-label`} className="pt-5 text-sm text-muted-foreground">{slot}</div>
+                  <div key={`${slot}-label`} className="pt-3.5 text-[13px] text-muted-foreground">{slot}</div>
                   {(() => {
                     const appointment = dayAppointments.find(
                       (item) => format(new Date(item.startAt), "HH:mm") === slot,
@@ -492,18 +518,20 @@ export function AppointmentsPage() {
                             setCreateOpen(true);
                           }
                         }}
-                        className={`min-h-[72px] rounded-[10px] border p-3 text-left transition-all duration-200 ease-out ${appointment ? isSelectedAppointment ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-sky-200/45 bg-sky-500/[0.05] hover:bg-sky-500/[0.08] dark:border-sky-400/18 dark:bg-sky-400/[0.06] dark:hover:bg-sky-400/[0.1]" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}
+                        className={`min-h-[52px] rounded-[10px] border px-3 py-2 text-left transition-all duration-200 ease-out ${appointment ? isSelectedAppointment ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-sky-200/45 bg-sky-500/[0.05] hover:bg-sky-500/[0.08] dark:border-sky-400/18 dark:bg-sky-400/[0.06] dark:hover:bg-sky-400/[0.1]" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}
                       >
                         {appointment ? (
-                          <>
-                            <div className="mb-1 flex items-center justify-between gap-2">
-                              <p className="truncate text-sm font-medium text-foreground">{getPatientById(patients, appointment.patientId)?.fullName}</p>
+                          <div className="flex items-center justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="truncate text-[13px] font-medium leading-tight text-foreground">{getPatientById(patients, appointment.patientId)?.fullName}</p>
+                              <p className="truncate text-[11px] leading-tight text-muted-foreground">{appointment.type}</p>
                             </div>
-                            <p className="truncate text-xs text-muted-foreground">{appointment.type}</p>
-                            <div className="mt-2"><StatusBadge label={appointmentStatusLabels[appointment.status]} status={appointment.status} /></div>
-                          </>
+                            <div className="shrink-0">
+                              <StatusBadge label={appointmentStatusLabels[appointment.status]} status={appointment.status} />
+                            </div>
+                          </div>
                         ) : (
-                          <span className="text-xs text-muted-foreground">Свободный слот</span>
+                          <span className="text-[11px] text-muted-foreground">Свободный слот</span>
                         )}
                       </button>
                     );
@@ -522,15 +550,15 @@ export function AppointmentsPage() {
                     <div className="mb-6 border-b border-border pb-6">
                       <div className="mb-3 flex items-center gap-3">
                         <div className="flex size-14 items-center justify-center rounded-full bg-primary/10 text-primary"><UserRound className="size-6" /></div>
-                        <div><h2 className="text-lg font-semibold text-foreground">{patient?.fullName}</h2><p className="text-sm text-muted-foreground">{selectedAppointment.department} • кабинет {selectedAppointment.room}</p></div>
+                        <div><h2 className="text-lg font-semibold text-foreground">{patient?.fullName}</h2><p className="text-[13px] text-muted-foreground">{selectedAppointment.department} • кабинет {selectedAppointment.room}</p></div>
                       </div>
                       <StatusBadge label={appointmentStatusLabels[selectedAppointment.status]} status={selectedAppointment.status} />
                     </div>
                     <div className="space-y-4">
-                      <div><p className="text-xs text-muted-foreground">Дата и время</p><p className="text-sm font-medium text-foreground">{formatDisplayDateTime(selectedAppointment.startAt)}</p></div>
-                      <div><p className="text-xs text-muted-foreground">Длительность</p><p className="text-sm font-medium text-foreground">{selectedAppointment.durationMinutes} минут</p></div>
-                      <div><p className="text-xs text-muted-foreground">Тип приема</p><p className="text-sm font-medium text-foreground">{selectedAppointment.type}</p></div>
-                      <div><p className="text-xs text-muted-foreground">Комментарий</p><p className="text-sm text-foreground">{selectedAppointment.notes || "Комментарий не указан"}</p></div>
+                      <div><p className="text-[11px] text-muted-foreground">Дата и время</p><p className="text-[13px] font-medium text-foreground">{formatDisplayDateTime(selectedAppointment.startAt)}</p></div>
+                      <div><p className="text-[11px] text-muted-foreground">Длительность</p><p className="text-[13px] font-medium text-foreground">{selectedAppointment.durationMinutes} минут</p></div>
+                      <div><p className="text-[11px] text-muted-foreground">Тип приема</p><p className="text-[13px] font-medium text-foreground">{selectedAppointment.type}</p></div>
+                      <div><p className="text-[11px] text-muted-foreground">Комментарий</p><p className="text-[13px] text-foreground">{selectedAppointment.notes || "Комментарий не указан"}</p></div>
                     </div>
                     <div className="mt-6 grid grid-cols-2 gap-2">
                       {(["confirmed", "pending", "completed", "cancelled"] as AppointmentStatus[]).map((status) => (

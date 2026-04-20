@@ -1,7 +1,8 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
-  --font-size: 16px;
+  --font-size: 15px;
+  --font-medical-display: "Aptos Narrow", "Aptos", "IBM Plex Sans", "Segoe UI", sans-serif;
   --background: #f4f9ff;
   --foreground: #163047;
   --card: #ffffff;
@@ -181,6 +182,13 @@
 }
 
 @layer utilities {
+  .font-medical-display {
+    font-family: var(--font-medical-display);
+    font-feature-settings: "tnum" 1;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.01em;
+  }
+
   .rounded-xs,
   .rounded-sm,
   .rounded-md,

@@ -298,12 +298,12 @@ export function PatientsPage() {
                     <button key={patient.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("patient", patient.id); setSearchParams(next); }} className={`w-full rounded-[10px] border p-4 text-left transition-all duration-200 ease-out ${selectedPatient?.id === patient.id ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.05] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>
                       <div className="mb-3 flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3">
-                          <div className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{patient.initials}</div>
-                          <div><div className="mb-1 flex flex-wrap items-center gap-2"><p className="font-medium text-foreground">{patient.fullName}</p><StatusBadge label={patientStatusLabels[patient.status]} status={patient.status} /></div><p className="text-sm text-muted-foreground">{calculateAge(patient.birthDate)} лет • {patient.diagnosis}</p></div>
+                          <div className="flex size-12 items-center justify-center rounded-[12px] bg-primary/10 text-sm font-semibold text-primary">{patient.initials}</div>
+                          <div><div className="mb-1 flex flex-wrap items-center gap-2"><p className="font-medium text-foreground">{patient.fullName}</p><StatusBadge label={patientStatusLabels[patient.status]} status={patient.status} /></div><p className="text-[13px] text-muted-foreground">{calculateAge(patient.birthDate)} лет • {patient.diagnosis}</p></div>
                         </div>
-                        <div className="text-right text-xs text-muted-foreground"><p>Последний визит</p><p className="font-medium text-foreground">{formatCompactDate(patient.lastVisitAt)}</p></div>
+                        <div className="text-right text-[11px] text-muted-foreground"><p>Последний визит</p><p className="font-medium text-foreground">{formatCompactDate(patient.lastVisitAt)}</p></div>
                       </div>
-                      <div className="grid gap-2 text-sm text-muted-foreground md:grid-cols-3"><p>{patient.phone}</p><p>{patient.email}</p><p>{nextForPatient ? `Следующий прием ${formatCompactDate(nextForPatient.startAt)}` : "Следующий прием не назначен"}</p></div>
+                      <div className="grid gap-2 text-[13px] text-muted-foreground md:grid-cols-3"><p>{patient.phone}</p><p>{patient.email}</p><p>{nextForPatient ? `Следующий прием ${formatCompactDate(nextForPatient.startAt)}` : "Следующий прием не назначен"}</p></div>
                     </button>
                   );
                 })}
@@ -316,40 +316,40 @@ export function PatientsPage() {
               <>
                 <div className="mb-6 flex items-start justify-between gap-4 border-b border-border pb-6">
                   <div className="flex items-center gap-4">
-                    <div className="flex size-20 items-center justify-center rounded-full bg-primary/10 text-2xl font-semibold text-primary">{selectedPatient.initials}</div>
+                    <div className="flex size-20 items-center justify-center rounded-[16px] bg-primary/10 text-2xl font-semibold text-primary">{selectedPatient.initials}</div>
                     <div>
                       <div className="mb-1 flex flex-wrap items-center gap-2"><h2 className="text-xl font-semibold text-foreground">{selectedPatient.fullName}</h2><StatusBadge label={patientStatusLabels[selectedPatient.status]} status={selectedPatient.status} /></div>
-                      <p className="text-sm text-muted-foreground">{calculateAge(selectedPatient.birthDate)} лет • {selectedPatient.city}</p>
-                      <p className="mt-2 text-sm text-foreground">{selectedPatient.overview}</p>
+                      <p className="text-[13px] text-muted-foreground">{calculateAge(selectedPatient.birthDate)} лет • {selectedPatient.city}</p>
+                      <p className="mt-2 text-[13px] text-foreground">{selectedPatient.overview}</p>
                     </div>
                   </div>
                   <Button variant="outline" className="rounded-2xl" onClick={() => setEditOpen(true)}><UserPen className="mr-2 size-4" />Редактировать</Button>
                 </div>
 
                 <div className="mb-6 grid gap-4 md:grid-cols-2">
-                  <div className="rounded-2xl bg-muted/60 p-4"><p className="mb-2 text-xs uppercase tracking-[0.16em] text-muted-foreground">Контакты</p><div className="space-y-2 text-sm"><p className="flex items-center gap-2 text-foreground"><Phone className="size-4 text-muted-foreground" />{selectedPatient.phone}</p><p className="flex items-center gap-2 text-foreground"><Mail className="size-4 text-muted-foreground" />{selectedPatient.email}</p><p className="flex items-center gap-2 text-foreground"><MapPin className="size-4 text-muted-foreground" />{selectedPatient.address}</p></div></div>
-                  <div className="rounded-2xl bg-muted/60 p-4"><p className="mb-2 text-xs uppercase tracking-[0.16em] text-muted-foreground">Сводка</p><div className="grid grid-cols-2 gap-3 text-sm"><div><p className="text-muted-foreground">АД</p><p className="font-medium text-foreground">{selectedPatient.metrics.bloodPressure}</p></div><div><p className="text-muted-foreground">Пульс</p><p className="font-medium text-foreground">{selectedPatient.metrics.pulse} уд/мин</p></div><div><p className="text-muted-foreground">SpO₂</p><p className="font-medium text-foreground">{selectedPatient.metrics.oxygenLevel}%</p></div><div><p className="text-muted-foreground">Температура</p><p className="font-medium text-foreground">{selectedPatient.metrics.temperature} °C</p></div></div></div>
+                  <div className="rounded-2xl bg-muted/60 p-4"><p className="mb-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Контакты</p><div className="space-y-2 text-[13px]"><p className="flex items-center gap-2 text-foreground"><Phone className="size-4 text-muted-foreground" />{selectedPatient.phone}</p><p className="flex items-center gap-2 text-foreground"><Mail className="size-4 text-muted-foreground" />{selectedPatient.email}</p><p className="flex items-center gap-2 text-foreground"><MapPin className="size-4 text-muted-foreground" />{selectedPatient.address}</p></div></div>
+                  <div className="rounded-2xl bg-muted/60 p-4"><p className="mb-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">Сводка</p><div className="grid grid-cols-2 gap-3 text-[13px]"><div><p className="text-muted-foreground">АД</p><p className="font-medium text-foreground">{selectedPatient.metrics.bloodPressure}</p></div><div><p className="text-muted-foreground">Пульс</p><p className="font-medium text-foreground">{selectedPatient.metrics.pulse} уд/мин</p></div><div><p className="text-muted-foreground">SpO₂</p><p className="font-medium text-foreground">{selectedPatient.metrics.oxygenLevel}%</p></div><div><p className="text-muted-foreground">Температура</p><p className="font-medium text-foreground">{selectedPatient.metrics.temperature} °C</p></div></div></div>
                 </div>
 
                 <div className="mb-6 grid gap-3 md:grid-cols-3">
                   <div className="rounded-2xl border border-border p-4">
                     <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Приемы</p>
-                    <p className="mt-2 text-2xl font-semibold text-foreground">{patientAppointments.length}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="mt-2 text-[22px] font-semibold leading-none text-foreground">{patientAppointments.length}</p>
+                    <p className="text-[13px] text-muted-foreground">
                       {nextAppointment ? `Следующий ${formatCompactDate(nextAppointment.startAt)}` : "Новых приемов нет"}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-border p-4">
                     <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Медкарты</p>
-                    <p className="mt-2 text-2xl font-semibold text-foreground">{patientRecords.length}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="mt-2 text-[22px] font-semibold leading-none text-foreground">{patientRecords.length}</p>
+                    <p className="text-[13px] text-muted-foreground">
                       {latestRecord ? `Последняя ${formatCompactDate(latestRecord.createdAt)}` : "Записей пока нет"}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-border p-4">
                     <p className="text-xs uppercase tracking-[0.16em] text-muted-foreground">Назначения</p>
-                    <p className="mt-2 text-2xl font-semibold text-foreground">{patientPrescriptions.length}</p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="mt-2 text-[22px] font-semibold leading-none text-foreground">{patientPrescriptions.length}</p>
+                    <p className="text-[13px] text-muted-foreground">
                       {patientPrescriptions.length > 0 ? "Доступны в карточке пациента" : "Не оформлены"}
                     </p>
                   </div>
@@ -364,13 +364,13 @@ export function PatientsPage() {
                 <Tabs value={tab} onValueChange={setTab}>
                   <TabsList className="mb-4 grid w-full grid-cols-4"><TabsTrigger value="overview">Обзор</TabsTrigger><TabsTrigger value="history">История</TabsTrigger><TabsTrigger value="appointments">Приемы</TabsTrigger><TabsTrigger value="prescriptions">Назначения</TabsTrigger></TabsList>
                   <TabsContent value="overview" className="space-y-4">
-                    <div className="rounded-2xl border border-border p-4"><p className="mb-2 text-sm font-semibold text-foreground">Основная информация</p><div className="grid gap-3 text-sm md:grid-cols-2"><div><p className="text-muted-foreground">Диагноз</p><p className="font-medium text-foreground">{selectedPatient.diagnosis}</p></div><div><p className="text-muted-foreground">Последний врач</p><p className="font-medium text-foreground">{selectedPatient.lastDoctor}</p></div><div><p className="text-muted-foreground">Аллергии</p><p className="font-medium text-foreground">{selectedPatient.allergies.length ? selectedPatient.allergies.join(", ") : "Не указаны"}</p></div><div><p className="text-muted-foreground">Контакт ЧС</p><p className="font-medium text-foreground">{selectedPatient.emergencyContact}</p></div></div></div>
-                    {latestRecord ? <button onClick={() => navigate(`/records/${latestRecord.id}`)} className="w-full rounded-2xl border border-border p-4 text-left transition-colors hover:bg-accent/40"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-sm font-semibold text-foreground">Последняя медицинская запись</p><StatusBadge label={recordStatusLabels[latestRecord.status]} status={latestRecord.status} /></div><p className="mb-2 text-sm text-muted-foreground">{formatDisplayDateTime(latestRecord.createdAt)} • {latestRecord.doctorName}</p><p className="text-sm text-foreground">{latestRecord.diagnosis}</p></button> : null}
-                    {nextAppointment ? <div className="rounded-2xl border border-border p-4"><p className="mb-2 text-sm font-semibold text-foreground">Следующий прием</p><p className="text-sm text-muted-foreground">{formatDisplayDateTime(nextAppointment.startAt)} • кабинет {nextAppointment.room}</p></div> : null}
+                    <div className="rounded-2xl border border-border p-4"><p className="mb-2 text-[13px] font-semibold text-foreground">Основная информация</p><div className="grid gap-3 text-[13px] md:grid-cols-2"><div><p className="text-muted-foreground">Диагноз</p><p className="font-medium text-foreground">{selectedPatient.diagnosis}</p></div><div><p className="text-muted-foreground">Последний врач</p><p className="font-medium text-foreground">{selectedPatient.lastDoctor}</p></div><div><p className="text-muted-foreground">Аллергии</p><p className="font-medium text-foreground">{selectedPatient.allergies.length ? selectedPatient.allergies.join(", ") : "Не указаны"}</p></div><div><p className="text-muted-foreground">Контакт ЧС</p><p className="font-medium text-foreground">{selectedPatient.emergencyContact}</p></div></div></div>
+                    {latestRecord ? <button onClick={() => navigate(`/records/${latestRecord.id}`)} className="w-full rounded-2xl border border-border p-4 text-left transition-colors hover:bg-accent/40"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-[13px] font-semibold text-foreground">Последняя медицинская запись</p><StatusBadge label={recordStatusLabels[latestRecord.status]} status={latestRecord.status} /></div><p className="mb-2 text-[13px] text-muted-foreground">{formatDisplayDateTime(latestRecord.createdAt)} • {latestRecord.doctorName}</p><p className="text-[13px] text-foreground">{latestRecord.diagnosis}</p></button> : null}
+                    {nextAppointment ? <div className="rounded-2xl border border-border p-4"><p className="mb-2 text-[13px] font-semibold text-foreground">Следующий прием</p><p className="text-[13px] text-muted-foreground">{formatDisplayDateTime(nextAppointment.startAt)} • кабинет {nextAppointment.room}</p></div> : null}
                   </TabsContent>
-                  <TabsContent value="history" className="space-y-3">{selectedPatient.medicalHistory.map((item) => <div key={item} className="rounded-2xl border border-border p-4 text-sm">{item}</div>)}</TabsContent>
-                  <TabsContent value="appointments" className="space-y-3">{patientAppointments.length === 0 ? <StatePanel title="Нет записей" description="Для выбранного пациента еще нет приемов в расписании." /> : patientAppointments.map((appointment: Appointment) => <button key={appointment.id} onClick={() => navigate(`/appointments?appointment=${appointment.id}`)} className="w-full rounded-2xl border border-border p-4 text-left transition-colors hover:bg-accent/40"><div className="mb-2 flex items-center justify-between gap-3"><p className="font-medium text-foreground">{appointment.type}</p><StatusBadge label={appointmentStatusLabels[appointment.status]} status={appointment.status} /></div><p className="text-sm text-muted-foreground">{formatCompactDate(appointment.startAt)} в {formatDisplayTime(appointment.startAt)} • {appointment.department}</p></button>)}</TabsContent>
-                  <TabsContent value="prescriptions" className="space-y-3">{patientPrescriptions.length === 0 ? <StatePanel title="Нет назначений" description="Назначения для пациента пока не оформлены." /> : patientPrescriptions.map((prescription) => <button key={prescription.id} onClick={() => navigate(`/prescriptions?prescription=${prescription.id}`)} className="w-full rounded-2xl border border-border p-4 text-left transition-colors hover:bg-accent/40"><div className="mb-2 flex items-center justify-between gap-3"><p className="font-medium text-foreground">{prescription.medication}</p><StatusBadge label={prescriptionStatusLabels[prescription.status]} status={prescription.status} /></div><p className="text-sm text-muted-foreground">{prescription.dosage} • {prescription.frequency}</p></button>)}</TabsContent>
+                  <TabsContent value="history" className="space-y-3">{selectedPatient.medicalHistory.map((item) => <div key={item} className="rounded-2xl border border-border p-4 text-[13px]">{item}</div>)}</TabsContent>
+                  <TabsContent value="appointments" className="space-y-3">{patientAppointments.length === 0 ? <StatePanel title="Нет записей" description="Для выбранного пациента еще нет приемов в расписании." /> : patientAppointments.map((appointment: Appointment) => <button key={appointment.id} onClick={() => navigate(`/appointments?appointment=${appointment.id}`)} className="w-full rounded-2xl border border-border p-4 text-left transition-colors hover:bg-accent/40"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-[13px] font-medium text-foreground">{appointment.type}</p><StatusBadge label={appointmentStatusLabels[appointment.status]} status={appointment.status} /></div><p className="text-[13px] text-muted-foreground">{formatCompactDate(appointment.startAt)} в {formatDisplayTime(appointment.startAt)} • {appointment.department}</p></button>)}</TabsContent>
+                  <TabsContent value="prescriptions" className="space-y-3">{patientPrescriptions.length === 0 ? <StatePanel title="Нет назначений" description="Назначения для пациента пока не оформлены." /> : patientPrescriptions.map((prescription) => <button key={prescription.id} onClick={() => navigate(`/prescriptions?prescription=${prescription.id}`)} className="w-full rounded-2xl border border-border p-4 text-left transition-colors hover:bg-accent/40"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-[13px] font-medium text-foreground">{prescription.medication}</p><StatusBadge label={prescriptionStatusLabels[prescription.status]} status={prescription.status} /></div><p className="text-[13px] text-muted-foreground">{prescription.dosage} • {prescription.frequency}</p></button>)}</TabsContent>
                 </Tabs>
               </>
             ) : (

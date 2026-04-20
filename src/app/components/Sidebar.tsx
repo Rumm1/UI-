@@ -1,10 +1,10 @@
 import { Link, useLocation } from "react-router";
 import {
   Activity,
-  Bell,
   Calendar,
   FileText,
   LayoutDashboard,
+  Menu,
   Pill,
   Settings,
   Users,
@@ -12,44 +12,83 @@ import {
 import { useAppData } from "../contexts/AppDataContext";
 
 const navItems = [
-  { icon: LayoutDashboard, label: "Дашборд", path: "/" },
+  { icon: LayoutDashboard, label: "Главное", path: "/" },
   { icon: Users, label: "Пациенты", path: "/patients" },
   { icon: Calendar, label: "Записи", path: "/appointments" },
   { icon: FileText, label: "Медкарты", path: "/records" },
   { icon: Pill, label: "Назначения", path: "/prescriptions" },
-  { icon: Bell, label: "Уведомления", path: "/notifications" },
   { icon: Settings, label: "Настройки", path: "/settings" },
 ];
 
 interface SidebarProps {
   collapsed: boolean;
+  onToggleSidebar: () => void;
 }
 
-export function Sidebar({ collapsed }: SidebarProps) {
+function BrandMark({ compact = false }: { compact?: boolean }) {
+  return (
+    <div
+      className={`relative flex items-center justify-center rounded-[12px] bg-primary text-primary-foreground shadow-sm ${
+        compact ? "size-10" : "size-9"
+      }`}
+    >
+      <Activity className={compact ? "size-5" : "size-[18px]"} />
+    </div>
+  );
+}
+
+export function Sidebar({ collapsed, onToggleSidebar }: SidebarProps) {
   const location = useLocation();
-  const { unreadCount } = useAppData();
+  const { profile } = useAppData();
 
   return (
     <aside
       className={`hidden border-r border-border bg-card md:flex md:flex-col ${
-        collapsed ? "md:w-20" : "md:w-72"
+        collapsed ? "md:w-[72px]" : "md:w-64"
       } transition-all duration-300`}
     >
-      <div className="flex h-16 items-center gap-3 border-b border-border px-4">
-        <div className="flex size-10 items-center justify-center rounded-2xl bg-primary text-primary-foreground shadow-sm">
-          <Activity className="size-5" />
-        </div>
-        {!collapsed ? (
-          <div className="min-w-0">
-            <p className="text-sm font-semibold text-foreground">MedSystem</p>
-            <p className="text-xs text-muted-foreground">
-              Interactive prototype
-            </p>
-          </div>
-        ) : null}
+      <div
+        className={`border-b border-border ${
+          collapsed
+            ? "flex h-14 items-center justify-center px-2"
+            : "flex h-14 items-center justify-between gap-3 px-3"
+        }`}
+      >
+        {collapsed ? (
+          <button
+            onClick={onToggleSidebar}
+            className="group flex size-11 items-center justify-center rounded-[14px] border border-sky-300/35 bg-linear-to-br from-sky-500/[0.10] via-card to-primary/[0.18] transition-all duration-200 hover:border-sky-300/55 hover:bg-linear-to-br hover:from-sky-500/[0.14] hover:to-primary/[0.22] hover:shadow-[0_12px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/20 dark:from-sky-400/[0.12] dark:to-sky-500/[0.18] dark:hover:border-sky-400/35"
+            aria-label="Развернуть навигацию"
+            title="MedSystem"
+          >
+            <span className="relative flex size-10 items-center justify-center overflow-hidden rounded-[12px] bg-primary text-primary-foreground shadow-sm">
+              <Activity className="absolute size-5 transition-all duration-200 group-hover:scale-75 group-hover:opacity-0" />
+              <Menu className="absolute size-5 translate-y-1 scale-75 opacity-0 transition-all duration-200 group-hover:translate-y-0 group-hover:scale-100 group-hover:opacity-100" />
+            </span>
+          </button>
+        ) : (
+          <>
+            <div className="flex min-w-0 items-center gap-3">
+              <BrandMark />
+              <div className="min-w-0">
+                <p className="text-[13px] font-semibold text-foreground">MedSystem</p>
+                <p className="text-[11px] text-muted-foreground">
+                  Interactive prototype
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={onToggleSidebar}
+              className="rounded-[10px] p-2 transition-colors hover:bg-accent"
+              aria-label="Свернуть навигацию"
+            >
+              <Menu className="size-5 text-foreground" />
+            </button>
+          </>
+        )}
       </div>
 
-      <nav className="flex-1 px-3 py-4">
+      <nav className="flex-1 px-2.5 py-3">
         {navItems.map((item) => {
           const isActive =
             item.path === "/"
@@ -60,22 +99,17 @@ export function Sidebar({ collapsed }: SidebarProps) {
             <Link
               key={item.path}
               to={item.path}
-              className={`mb-1 flex items-center gap-3 rounded-[10px] border px-3 py-3 transition-all duration-200 ease-out ${
+              className={`mb-1 flex items-center gap-2.5 rounded-[10px] border px-3 py-2.5 transition-all duration-200 ease-out ${
                 isActive
                   ? "border-sky-300/55 bg-sky-500/10 text-sky-900 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50"
                   : "border-transparent text-muted-foreground hover:border-sky-300/35 hover:bg-sky-500/[0.06] hover:text-foreground dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08] dark:hover:text-sky-50"
               } ${collapsed ? "justify-center" : ""}`}
               title={collapsed ? item.label : undefined}
             >
-              <item.icon className="size-5 shrink-0" />
+              <item.icon className="size-[18px] shrink-0" />
               {!collapsed ? (
                 <>
-                  <span className="flex-1 text-sm">{item.label}</span>
-                  {item.path === "/notifications" && unreadCount > 0 ? (
-                    <span className="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold">
-                      {unreadCount}
-                    </span>
-                  ) : null}
+                  <span className="flex-1 text-[13px]">{item.label}</span>
                 </>
               ) : null}
             </Link>
@@ -84,14 +118,25 @@ export function Sidebar({ collapsed }: SidebarProps) {
       </nav>
 
       {!collapsed ? (
-        <div className="m-3 rounded-2xl border border-border bg-muted/60 p-4">
-          <p className="mb-1 text-xs uppercase tracking-[0.2em] text-muted-foreground">
-            Demo Mode
-          </p>
-          <p className="text-sm font-medium text-foreground">
-            Данные работают на mock-слое и синхронизируются между страницами.
-          </p>
-        </div>
+        <Link
+          to="/settings"
+          className="m-2.5 flex items-center justify-between gap-3 rounded-[14px] border border-border bg-muted/50 p-3.5 transition-colors hover:bg-accent/60"
+        >
+          <div className="flex min-w-0 items-center gap-3">
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-[12px] bg-primary/10 text-sm font-semibold text-primary">
+              {profile.initials || "ИИ"}
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-[13px] font-semibold text-foreground">
+                {profile.fullName}
+              </p>
+              <p className="truncate text-[11px] text-muted-foreground">
+                {profile.specialty}
+              </p>
+            </div>
+          </div>
+          <Settings className="size-4 shrink-0 text-muted-foreground" />
+        </Link>
       ) : null}
     </aside>
   );

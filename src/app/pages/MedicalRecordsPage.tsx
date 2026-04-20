@@ -225,7 +225,7 @@ export function MedicalRecordsPage() {
           <div className="mb-6 flex flex-col gap-3 rounded-3xl border border-border bg-card p-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-medium text-foreground">Фокус на пациенте: {selectedPatient.fullName}</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-[13px] text-muted-foreground">
                 {appointmentContext
                   ? `Новая запись будет связана с приемом ${formatDisplayDateTime(appointmentContext.startAt)}.`
                   : "Список сейчас отфильтрован по одному пациенту для удобного demo-сценария."}
@@ -265,15 +265,19 @@ export function MedicalRecordsPage() {
                           <p className="font-medium text-foreground">{patient?.fullName}</p>
                           <StatusBadge label={recordStatusLabels[record.status]} status={record.status} />
                         </div>
-                        <p className="text-sm text-muted-foreground">{record.visitType} • {record.doctorName}</p>
+                        <p className="text-[13px] text-muted-foreground">{record.visitType} • {record.doctorName}</p>
                       </div>
-                      <div className="flex items-center gap-2 text-sm text-primary">
+                      <div className="flex items-center gap-2 text-[13px] text-primary">
                         <span>Открыть</span>
                         <ArrowRight className="size-4" />
                       </div>
                     </div>
-                    <p className="mb-2 text-sm text-muted-foreground">{formatDisplayDateTime(record.createdAt)}</p>
-                    <p className="text-sm text-foreground">{record.diagnosis}</p>
+                    <div className="flex items-end justify-between gap-4">
+                      <p className="min-w-0 flex-1 text-[13px] text-foreground">{record.diagnosis}</p>
+                      <p className="shrink-0 text-right text-[11px] text-muted-foreground">
+                        {formatDisplayDateTime(record.createdAt)}
+                      </p>
+                    </div>
                   </button>
                 );
               })}

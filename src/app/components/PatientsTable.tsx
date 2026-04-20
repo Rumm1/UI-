@@ -20,13 +20,13 @@ export function PatientsTable({ patients }: PatientsTableProps) {
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Пациенты под наблюдением</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[13px] text-muted-foreground">
             Последние изменения в активной базе пациентов
           </p>
         </div>
         <button
           onClick={() => navigate("/patients")}
-          className="rounded-2xl px-3 py-2 text-sm text-primary transition-colors hover:bg-accent"
+          className="rounded-2xl px-3 py-2 text-[13px] text-primary transition-colors hover:bg-accent"
         >
           Вся база
         </button>
@@ -68,22 +68,22 @@ export function PatientsTable({ patients }: PatientsTableProps) {
                 >
                   <td className="px-3 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+                      <div className="flex size-10 items-center justify-center rounded-[10px] bg-primary/10 text-sm font-semibold text-primary">
                         {patient.initials}
                       </div>
                       <div>
                         <p className="font-medium text-foreground">{patient.fullName}</p>
-                        <p className="text-xs text-muted-foreground">{patient.phone}</p>
+                        <p className="text-[11px] text-muted-foreground">{patient.phone}</p>
                       </div>
                     </div>
                   </td>
-                  <td className="px-3 py-4 text-sm text-foreground">
+                  <td className="px-3 py-4 text-[13px] text-foreground">
                     {calculateAge(patient.birthDate)}
                   </td>
-                  <td className="px-3 py-4 text-sm text-muted-foreground">
+                  <td className="px-3 py-4 text-[13px] text-muted-foreground">
                     {patient.diagnosis}
                   </td>
-                  <td className="px-3 py-4 text-sm text-muted-foreground">
+                  <td className="px-3 py-4 text-[13px] text-muted-foreground">
                     {formatCompactDate(patient.lastVisitAt)}
                   </td>
                   <td className="px-3 py-4">

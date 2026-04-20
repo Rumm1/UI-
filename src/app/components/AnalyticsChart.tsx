@@ -25,18 +25,18 @@ export function AnalyticsChart({
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
           <h2 className="mb-1 text-lg font-semibold text-foreground">{title}</h2>
-          <p className="text-sm text-muted-foreground">{description}</p>
+          <p className="text-[13px] text-muted-foreground">{description}</p>
         </div>
         <div className="hidden items-center gap-4 md:flex">
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
             <span className="size-3 rounded-sm bg-chart-1" />
             Приемы
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
             <span className="size-3 rounded-sm bg-chart-2" />
             Медкарты
           </div>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
             <span className="size-3 rounded-sm bg-chart-3" />
             Пациенты
           </div>

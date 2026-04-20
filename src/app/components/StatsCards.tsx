@@ -14,23 +14,29 @@ interface StatsCardsProps {
 
 export function StatsCards({ items }: StatsCardsProps) {
   return (
-    <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+    <div className="mb-6 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
       {items.map((item) => (
         <button
           key={item.id}
           onClick={item.onClick}
-          className="rounded-3xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg"
+          className="font-medical-display flex h-[62px] items-center justify-between gap-3 rounded-[10px] border border-border bg-card px-4 py-3 text-left transition-colors hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
         >
-          <div className="mb-4 flex items-start justify-between">
+          <div className="flex min-w-0 items-center gap-3">
             <div
-              className={`flex size-12 items-center justify-center rounded-2xl ${item.accentClassName}`}
+              className={`flex size-9 shrink-0 items-center justify-center rounded-[10px] ${item.accentClassName}`}
             >
-              <item.icon className="size-5" />
+              <item.icon className="size-4" />
+            </div>
+            <div className="min-w-0">
+              <p className="truncate text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                {item.label}
+              </p>
+              <p className="truncate text-[10px] text-muted-foreground">{item.description}</p>
             </div>
           </div>
-          <p className="mb-1 text-sm text-muted-foreground">{item.label}</p>
-          <p className="mb-1 text-3xl font-semibold text-foreground">{item.value}</p>
-          <p className="text-xs text-muted-foreground">{item.description}</p>
+          <p className="shrink-0 text-[24px] font-semibold leading-none text-foreground">
+            {item.value}
+          </p>
         </button>
       ))}
     </div>

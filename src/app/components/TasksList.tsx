@@ -25,7 +25,7 @@ export function TasksList({ tasks, onToggle }: TasksListProps) {
     <div className="rounded-3xl border border-border bg-card p-6">
       <div className="mb-5">
         <h2 className="text-lg font-semibold text-foreground">Операционные задачи</h2>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-[13px] text-muted-foreground">
           Небольшая интерактивная лента задач для ощущения реального рабочего стола
         </p>
       </div>
@@ -54,7 +54,7 @@ export function TasksList({ tasks, onToggle }: TasksListProps) {
               </span>
               <div className="min-w-0 flex-1">
                 <p
-                  className={`text-sm ${
+                  className={`text-[13px] ${
                     task.completed
                       ? "text-muted-foreground line-through"
                       : "text-foreground"

@@ -4,3 +4,5 @@ dist/
 Thumbs.db
 .idea/
 .vscode/
+vite-dev.log
+vite-dev.err.log

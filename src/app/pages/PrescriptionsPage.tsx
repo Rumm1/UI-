@@ -256,8 +256,8 @@ export function PrescriptionsPage() {
         {selectedPatient ? (
           <div className="mb-6 flex flex-col gap-3 rounded-3xl border border-border bg-card p-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-sm font-medium text-foreground">Контекст пациента: {selectedPatient.fullName}</p>
-              <p className="text-sm text-muted-foreground">
+              <p className="text-[13px] font-medium text-foreground">Контекст пациента: {selectedPatient.fullName}</p>
+              <p className="text-[13px] text-muted-foreground">
                 {recordContext
                   ? `Новое назначение будет связано с медицинской записью от ${formatCompactDate(recordContext.createdAt)}.`
                   : "Список ограничен выбранным пациентом для правдоподобного сценария назначения."}
@@ -270,8 +270,26 @@ export function PrescriptionsPage() {
           </div>
         ) : null}
 
-        <div className="mb-6 grid gap-4 md:grid-cols-3">
-          {cards.map((item) => <button key={item.label} onClick={item.onClick} className="rounded-3xl border border-border bg-card p-5 text-left transition-all hover:-translate-y-0.5 hover:shadow-lg"><div className={`mb-3 flex size-12 items-center justify-center rounded-2xl ${item.tone}`}><Pill className="size-5" /></div><p className="text-sm text-muted-foreground">{item.label}</p><p className="text-3xl font-semibold text-foreground">{item.value}</p></button>)}
+        <div className="mb-6 grid gap-3 md:grid-cols-3">
+          {cards.map((item) => (
+            <button
+              key={item.label}
+              onClick={item.onClick}
+              className="font-medical-display flex h-[62px] items-center justify-between gap-3 rounded-[10px] border border-border bg-card px-4 py-3 text-left transition-colors hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <div className={`flex size-9 shrink-0 items-center justify-center rounded-[10px] ${item.tone}`}>
+                  <Pill className="size-4" />
+                </div>
+                <p className="truncate text-[11px] uppercase tracking-[0.14em] text-muted-foreground">
+                  {item.label}
+                </p>
+              </div>
+              <p className="shrink-0 text-[24px] font-semibold leading-none text-foreground">
+                {item.value}
+              </p>
+            </button>
+          ))}
         </div>
 
         <div className="grid gap-6 lg:grid-cols-[1.1fr_1fr]">
@@ -289,8 +307,8 @@ export function PrescriptionsPage() {
                   const patient = getPatientById(patients, item.patientId);
                   return (
                     <button key={item.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("prescription", item.id); setSearchParams(next); }} className={`w-full rounded-[10px] border p-4 text-left transition-all duration-200 ease-out ${selectedPrescription?.id === item.id ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.05] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>
-                      <div className="mb-2 flex items-center justify-between gap-3"><div><p className="font-medium text-foreground">{item.medication}</p><p className="text-sm text-muted-foreground">{patient?.fullName}</p></div><StatusBadge label={prescriptionStatusLabels[item.status]} status={item.status} /></div>
-                      <p className="text-sm text-muted-foreground">{item.dosage} • {item.frequency}</p>
+                      <div className="mb-2 flex items-center justify-between gap-3"><div><p className="text-[13px] font-medium text-foreground">{item.medication}</p><p className="text-[13px] text-muted-foreground">{patient?.fullName}</p></div><StatusBadge label={prescriptionStatusLabels[item.status]} status={item.status} /></div>
+                      <p className="text-[13px] text-muted-foreground">{item.dosage} • {item.frequency}</p>
                     </button>
                   );
                 })}
@@ -305,15 +323,15 @@ export function PrescriptionsPage() {
                 return (
                   <>
                     <div className="mb-6 border-b border-border pb-6">
-                      <div className="mb-2 flex items-center justify-between gap-3"><div><h2 className="text-xl font-semibold text-foreground">{selectedPrescription.medication}</h2><p className="text-sm text-muted-foreground">{patient?.fullName}</p></div><StatusBadge label={prescriptionStatusLabels[selectedPrescription.status]} status={selectedPrescription.status} /></div>
-                      <p className="text-sm text-muted-foreground">Назначил {selectedPrescription.doctorName}</p>
+                      <div className="mb-2 flex items-center justify-between gap-3"><div><h2 className="text-xl font-semibold text-foreground">{selectedPrescription.medication}</h2><p className="text-[13px] text-muted-foreground">{patient?.fullName}</p></div><StatusBadge label={prescriptionStatusLabels[selectedPrescription.status]} status={selectedPrescription.status} /></div>
+                      <p className="text-[13px] text-muted-foreground">Назначил {selectedPrescription.doctorName}</p>
                     </div>
                     <div className="space-y-4">
-                      <div><p className="text-xs text-muted-foreground">Дозировка</p><p className="text-sm font-medium text-foreground">{selectedPrescription.dosage}</p></div>
-                      <div><p className="text-xs text-muted-foreground">Частота</p><p className="text-sm font-medium text-foreground">{selectedPrescription.frequency}</p></div>
-                      <div><p className="text-xs text-muted-foreground">Курс</p><p className="text-sm font-medium text-foreground">{selectedPrescription.duration}</p></div>
-                      <div><p className="text-xs text-muted-foreground">Инструкции</p><p className="text-sm text-foreground">{selectedPrescription.instructions}</p></div>
-                      <div className="grid gap-3 md:grid-cols-2"><div><p className="text-xs text-muted-foreground">Создан</p><p className="text-sm font-medium text-foreground">{formatCompactDate(selectedPrescription.createdAt)}</p></div><div><p className="text-xs text-muted-foreground">Действует до</p><p className="text-sm font-medium text-foreground">{formatCompactDate(selectedPrescription.expiresAt)}</p></div></div>
+                      <div><p className="text-[11px] text-muted-foreground">Дозировка</p><p className="text-[13px] font-medium text-foreground">{selectedPrescription.dosage}</p></div>
+                      <div><p className="text-[11px] text-muted-foreground">Частота</p><p className="text-[13px] font-medium text-foreground">{selectedPrescription.frequency}</p></div>
+                      <div><p className="text-[11px] text-muted-foreground">Курс</p><p className="text-[13px] font-medium text-foreground">{selectedPrescription.duration}</p></div>
+                      <div><p className="text-[11px] text-muted-foreground">Инструкции</p><p className="text-[13px] text-foreground">{selectedPrescription.instructions}</p></div>
+                      <div className="grid gap-3 md:grid-cols-2"><div><p className="text-[11px] text-muted-foreground">Создан</p><p className="text-[13px] font-medium text-foreground">{formatCompactDate(selectedPrescription.createdAt)}</p></div><div><p className="text-[11px] text-muted-foreground">Действует до</p><p className="text-[13px] font-medium text-foreground">{formatCompactDate(selectedPrescription.expiresAt)}</p></div></div>
                       <div className="flex flex-wrap gap-3">
                         {selectedPrescription.recordId ? <Button className="rounded-2xl" onClick={() => navigate(`/records/${selectedPrescription.recordId}`)}>Открыть медзапись</Button> : null}
                         <Button variant="outline" className="rounded-2xl" onClick={() => navigate(`/patients?patient=${selectedPrescription.patientId}`)}>Открыть пациента</Button>

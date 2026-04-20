@@ -17,13 +17,13 @@ export function NotificationsPanel({ notifications }: NotificationsPanelProps) {
       <div className="mb-5 flex items-center justify-between">
         <div>
           <h2 className="text-lg font-semibold text-foreground">Оповещения</h2>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-[13px] text-muted-foreground">
             Последние системные события и действия пользователя
           </p>
         </div>
         <button
           onClick={() => navigate("/notifications")}
-          className="rounded-2xl px-3 py-2 text-sm text-primary transition-colors hover:bg-accent"
+          className="rounded-2xl px-3 py-2 text-[13px] text-primary transition-colors hover:bg-accent"
         >
           Вся лента
         </button>
@@ -50,10 +50,10 @@ export function NotificationsPanel({ notifications }: NotificationsPanelProps) {
                 )}
               </div>
               <div className="min-w-0">
-                <p className="mb-1 text-sm font-medium text-foreground">
+                <p className="mb-1 text-[13px] font-medium text-foreground">
                   {notification.title}
                 </p>
-                <p className="mb-1 text-xs leading-5 text-muted-foreground">
+                <p className="mb-1 text-[11px] leading-5 text-muted-foreground">
                   {notification.body}
                 </p>
                 <p className="text-[11px] text-muted-foreground">

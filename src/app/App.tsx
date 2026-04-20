@@ -117,12 +117,12 @@ function AppShell() {
     <>
       <Router>
         <div className="flex size-full bg-background">
-          <Sidebar collapsed={sidebarCollapsed} />
+          <Sidebar
+            collapsed={sidebarCollapsed}
+            onToggleSidebar={() => setSidebarCollapsed((current) => !current)}
+          />
           <div className="flex min-w-0 flex-1 flex-col">
-            <Header
-              sidebarCollapsed={sidebarCollapsed}
-              onToggleSidebar={() => setSidebarCollapsed((current) => !current)}
-            />
+            <Header />
             <Suspense fallback={<RouteFallback />}>
               <Routes>
                 <Route path="/" element={<DashboardContent />} />
