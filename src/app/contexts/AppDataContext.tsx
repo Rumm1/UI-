@@ -60,6 +60,7 @@ const emptySnapshot: PrototypeSnapshot = {
     bio: "",
     theme: "light",
     language: "ru",
+    interfaceMode: "desktop",
     timezone: "",
     notifications: {
       email: true,

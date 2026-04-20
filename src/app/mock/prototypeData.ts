@@ -680,6 +680,7 @@ const profile: ProfileSettings = {
     "Курирует амбулаторный блок, отвечает за качество приема и внедрение цифровых сервисов в клинике.",
   theme: "light",
   language: "ru",
+  interfaceMode: "desktop",
   timezone: "Europe/Moscow",
   notifications: {
     email: true,

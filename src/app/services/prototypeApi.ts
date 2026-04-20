@@ -24,6 +24,24 @@ function buildDefaultSnapshot() {
   return structuredClone(buildPrototypeSnapshot());
 }
 
+function normalizeSnapshot(snapshot: PrototypeSnapshot) {
+  const defaults = buildDefaultSnapshot();
+
+  return {
+    ...defaults,
+    ...snapshot,
+    profile: {
+      ...defaults.profile,
+      ...snapshot.profile,
+      notifications: {
+        ...defaults.profile.notifications,
+        ...snapshot.profile?.notifications,
+      },
+      workingHours: snapshot.profile?.workingHours ?? defaults.profile.workingHours,
+    },
+  } satisfies PrototypeSnapshot;
+}
+
 function readStoredSnapshot() {
   if (typeof window === "undefined") {
     return null;
@@ -36,7 +54,7 @@ function readStoredSnapshot() {
       return null;
     }
 
-    return JSON.parse(raw) as PrototypeSnapshot;
+    return normalizeSnapshot(JSON.parse(raw) as PrototypeSnapshot);
   } catch (error) {
     console.error("Failed to read prototype snapshot", error);
     return null;

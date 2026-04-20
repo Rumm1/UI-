@@ -68,6 +68,17 @@ function RouteFallback() {
 function AppShell() {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { profile } = useAppData();
+  const interfaceMode = profile.interfaceMode ?? "desktop";
+  const shellFrameClass =
+    interfaceMode === "desktop"
+      ? "size-full"
+      : interfaceMode === "tablet"
+        ? "m-2 flex size-[calc(100%-1rem)] overflow-hidden rounded-[22px] border border-border shadow-[0_24px_64px_-42px_rgba(15,35,54,0.38)]"
+        : "m-1.5 flex size-[calc(100%-0.75rem)] overflow-hidden rounded-[24px] border border-border shadow-[0_24px_64px_-42px_rgba(15,35,54,0.42)]";
+
+  useEffect(() => {
+    setSidebarCollapsed(interfaceMode !== "desktop");
+  }, [interfaceMode]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -82,18 +93,22 @@ function AppShell() {
     }
 
     root.lang = profile.language === "en" ? "en" : "ru";
+    root.dataset.interfaceMode = interfaceMode;
     applyThemePreference();
 
     if (profile.theme !== "system") {
-      return;
+      return () => {
+        delete root.dataset.interfaceMode;
+      };
     }
 
     media.addEventListener("change", applyThemePreference);
 
     return () => {
       media.removeEventListener("change", applyThemePreference);
+      delete root.dataset.interfaceMode;
     };
-  }, [profile.language, profile.theme]);
+  }, [interfaceMode, profile.language, profile.theme]);
 
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
@@ -116,13 +131,14 @@ function AppShell() {
   return (
     <>
       <Router>
-        <div className="flex size-full bg-background">
+        <div className="flex min-h-screen w-full bg-background">
+          <div className={shellFrameClass}>
           <Sidebar
             collapsed={sidebarCollapsed}
             onToggleSidebar={() => setSidebarCollapsed((current) => !current)}
           />
           <div className="flex min-w-0 flex-1 flex-col">
-            <Header />
+            <Header interfaceMode={interfaceMode} />
             <Suspense fallback={<RouteFallback />}>
               <Routes>
                 <Route path="/" element={<DashboardContent />} />
@@ -136,6 +152,7 @@ function AppShell() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Suspense>
+          </div>
           </div>
         </div>
       </Router>

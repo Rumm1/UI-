@@ -40,6 +40,7 @@ function BrandMark({ compact = false }: { compact?: boolean }) {
 export function Sidebar({ collapsed, onToggleSidebar }: SidebarProps) {
   const location = useLocation();
   const { profile } = useAppData();
+  const profileInitials = profile.initials || "ИИ";
 
   return (
     <aside
@@ -107,24 +108,31 @@ export function Sidebar({ collapsed, onToggleSidebar }: SidebarProps) {
               title={collapsed ? item.label : undefined}
             >
               <item.icon className="size-[18px] shrink-0" />
-              {!collapsed ? (
-                <>
-                  <span className="flex-1 text-[13px]">{item.label}</span>
-                </>
-              ) : null}
+              {!collapsed ? <span className="flex-1 text-[13px]">{item.label}</span> : null}
             </Link>
           );
         })}
       </nav>
 
-      {!collapsed ? (
+      {collapsed ? (
         <Link
           to="/settings"
-          className="m-2.5 flex items-center justify-between gap-3 rounded-[14px] border border-border bg-muted/50 p-3.5 transition-colors hover:bg-accent/60"
+          className="m-2.5 mt-auto flex items-center justify-center rounded-[12px] border border-border bg-muted/45 p-2.5 transition-colors hover:bg-accent/60"
+          title={profile.fullName}
+          aria-label="Профиль"
+        >
+          <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-[13px] font-semibold text-primary">
+            {profileInitials}
+          </div>
+        </Link>
+      ) : (
+        <Link
+          to="/settings"
+          className="m-2.5 mt-auto flex items-center justify-between gap-3 rounded-[14px] border border-border bg-muted/50 p-3.5 transition-colors hover:bg-accent/60"
         >
           <div className="flex min-w-0 items-center gap-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-[12px] bg-primary/10 text-sm font-semibold text-primary">
-              {profile.initials || "ИИ"}
+            <div className="flex size-11 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
+              {profileInitials}
             </div>
             <div className="min-w-0">
               <p className="truncate text-[13px] font-semibold text-foreground">
@@ -137,7 +145,7 @@ export function Sidebar({ collapsed, onToggleSidebar }: SidebarProps) {
           </div>
           <Settings className="size-4 shrink-0 text-muted-foreground" />
         </Link>
-      ) : null}
+      )}
     </aside>
   );
 }

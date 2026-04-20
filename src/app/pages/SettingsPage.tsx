@@ -2,11 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import {
   Bell,
   Globe,
+  Monitor,
   Languages,
   Palette,
   RotateCcw,
   Save,
+  Smartphone,
   Settings2,
+  TabletSmartphone,
   UserRound,
 } from "lucide-react";
 import { useNavigate } from "react-router";
@@ -157,7 +160,7 @@ export function SettingsPage() {
         <div className="grid gap-6 lg:grid-cols-[0.9fr_1.3fr]">
           <section className="rounded-3xl border border-border bg-card p-6">
             <div className="mb-6 flex items-center gap-4 border-b border-border pb-6">
-              <div className="flex size-20 items-center justify-center rounded-[16px] bg-primary/10 text-2xl font-semibold text-primary">
+              <div className="flex size-20 items-center justify-center rounded-full bg-primary/10 text-2xl font-semibold text-primary">
                 {form.initials}
               </div>
               <div>
@@ -195,7 +198,7 @@ export function SettingsPage() {
                   </div>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-2">
+                <div className="grid gap-3 md:grid-cols-3">
                   <div className="rounded-[10px] border border-white/50 bg-background/75 p-3 shadow-sm dark:border-white/8 dark:bg-background/35">
                     <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                       <Languages className="size-3.5" />
@@ -212,7 +215,7 @@ export function SettingsPage() {
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="ru">Русский</SelectItem>
-                        <SelectItem value="en">English</SelectItem>
+                        <SelectItem value="en">Английский</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -232,11 +235,48 @@ export function SettingsPage() {
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="light">Light</SelectItem>
-                        <SelectItem value="dark">Dark</SelectItem>
-                        <SelectItem value="system">System</SelectItem>
+                        <SelectItem value="light">Светлая</SelectItem>
+                        <SelectItem value="dark">Темная</SelectItem>
+                        <SelectItem value="system">Системная</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+
+                  <div className="rounded-[10px] border border-white/50 bg-background/75 p-3 shadow-sm dark:border-white/8 dark:bg-background/35">
+                    <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                      <Monitor className="size-3.5" />
+                      Режим
+                    </div>
+                    <div className="grid grid-cols-3 gap-2">
+                      {([
+                        { value: "desktop", label: "ПК", icon: Monitor },
+                        { value: "tablet", label: "Планшет", icon: TabletSmartphone },
+                        { value: "mobile", label: "Мобайл", icon: Smartphone },
+                      ] as const).map((mode) => {
+                        const isActive = form.interfaceMode === mode.value;
+
+                        return (
+                          <button
+                            key={mode.value}
+                            type="button"
+                            onClick={() =>
+                              setForm((current) => ({
+                                ...current,
+                                interfaceMode: mode.value,
+                              }))
+                            }
+                            className={`flex h-[72px] flex-col items-center justify-center gap-1 rounded-[10px] border text-[11px] font-medium transition-colors ${
+                              isActive
+                                ? "border-sky-300/55 bg-sky-500/10 text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50"
+                                : "border-border bg-background/85 text-muted-foreground hover:bg-accent/60 hover:text-foreground"
+                            }`}
+                          >
+                            <mode.icon className="size-4" />
+                            <span>{mode.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>

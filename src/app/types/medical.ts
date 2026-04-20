@@ -13,6 +13,7 @@ export type PrescriptionStatus = "active" | "expired" | "draft";
 export type DashboardPeriod = "day" | "week" | "month";
 export type ThemePreference = "light" | "dark" | "system";
 export type LanguagePreference = "ru" | "en";
+export type InterfaceMode = "desktop" | "tablet" | "mobile";
 
 export interface PatientMetrics {
   bloodPressure: string;
@@ -132,6 +133,7 @@ export interface ProfileSettings {
   bio: string;
   theme: ThemePreference;
   language: LanguagePreference;
+  interfaceMode: InterfaceMode;
   timezone: string;
   notifications: ProfileNotificationSettings;
   workingHours: WorkingDay[];
