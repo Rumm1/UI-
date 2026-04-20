@@ -19,6 +19,18 @@ The project is already configured for GitHub Pages:
 - Vite builds assets with a relative base path;
 - `.github/workflows/deploy-pages.yml` publishes `dist` automatically.
 
+### If GitHub Actions is blocked by billing
+
+You can publish without Actions:
+
+1. Run `npm run build`.
+2. Copy the generated site from `dist` to `docs`.
+3. In GitHub open `Settings -> Pages`.
+4. Set `Source` to `Deploy from a branch`.
+5. Select branch `main` and folder `/docs`.
+
+This repository already contains a prepared `docs` folder for that fallback flow.
+
 ### What to do
 
 1. Create an empty GitHub repository.
