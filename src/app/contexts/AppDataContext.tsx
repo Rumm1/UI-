@@ -94,7 +94,13 @@ interface AppDataContextValue extends PrototypeSnapshot {
     updates: UpdatePrescriptionInput,
   ) => Promise<Prescription>;
   deletePrescription: (prescriptionId: string) => Promise<void>;
-  saveProfile: (profile: ProfileSettings) => Promise<ProfileSettings>;
+  saveProfile: (
+    profile: ProfileSettings,
+    options?: {
+      silent?: boolean;
+      emitNotification?: boolean;
+    },
+  ) => Promise<ProfileSettings>;
   toggleTaskState: (taskId: string) => Promise<TaskItem>;
   markNotificationRead: (notificationId: string) => Promise<void>;
   markAllRead: () => Promise<void>;
@@ -323,7 +329,13 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     });
   }
 
-  async function saveProfile(profile: ProfileSettings) {
+  async function saveProfile(
+    profile: ProfileSettings,
+    options?: {
+      silent?: boolean;
+      emitNotification?: boolean;
+    },
+  ) {
     const nextProfile = await updateProfileSettings(profile);
     const notification = await pushNotification({
       title: "Настройки профиля сохранены",
