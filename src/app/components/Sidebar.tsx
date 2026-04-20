@@ -117,11 +117,11 @@ export function Sidebar({ collapsed, onToggleSidebar }: SidebarProps) {
       {collapsed ? (
         <Link
           to="/settings"
-          className="m-2.5 mt-auto flex items-center justify-center rounded-[12px] border border-border bg-muted/45 p-2.5 transition-colors hover:bg-accent/60"
+          className="mx-2.5 mb-2.5 mt-auto flex items-center justify-center rounded-[10px] border border-transparent px-3 py-2.5 text-muted-foreground transition-all duration-200 ease-out hover:border-sky-300/35 hover:bg-sky-500/[0.06] hover:text-foreground dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08] dark:hover:text-sky-50"
           title={profile.fullName}
           aria-label="Профиль"
         >
-          <div className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-[13px] font-semibold text-primary">
+          <div className="flex size-[18px] items-center justify-center text-[11px] font-semibold leading-none text-current">
             {profileInitials}
           </div>
         </Link>
