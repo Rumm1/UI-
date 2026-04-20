@@ -71,10 +71,10 @@ function AppShell() {
   const interfaceMode = profile.interfaceMode ?? "desktop";
   const shellFrameClass =
     interfaceMode === "desktop"
-      ? "size-full"
+      ? "flex min-h-screen w-full"
       : interfaceMode === "tablet"
-        ? "m-2 flex size-[calc(100%-1rem)] overflow-hidden rounded-[22px] border border-border shadow-[0_24px_64px_-42px_rgba(15,35,54,0.38)]"
-        : "m-1.5 flex size-[calc(100%-0.75rem)] overflow-hidden rounded-[24px] border border-border shadow-[0_24px_64px_-42px_rgba(15,35,54,0.42)]";
+        ? "m-2 flex min-h-[calc(100vh-1rem)] w-[calc(100%-1rem)] overflow-hidden rounded-[22px] border border-border shadow-[0_24px_64px_-42px_rgba(15,35,54,0.38)]"
+        : "m-1.5 flex min-h-[calc(100vh-0.75rem)] w-[calc(100%-0.75rem)] overflow-hidden rounded-[24px] border border-border shadow-[0_24px_64px_-42px_rgba(15,35,54,0.42)]";
 
   useEffect(() => {
     setSidebarCollapsed(interfaceMode !== "desktop");
