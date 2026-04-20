@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from "react";
 import { BrowserRouter, HashRouter, Navigate, Route, Routes } from "react-router";
-import { Toaster } from "sonner";
+import { Toaster, toast } from "sonner";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
 import { AppDataProvider, useAppData } from "./contexts/AppDataContext";
@@ -24,6 +24,11 @@ const AppointmentsPage = lazy(() =>
 const MedicalRecordsPage = lazy(() =>
   import("./pages/MedicalRecordsPage").then((module) => ({
     default: module.MedicalRecordsPage,
+  })),
+);
+const MedicalRecordDetailPage = lazy(() =>
+  import("./pages/MedicalRecordDetailPage").then((module) => ({
+    default: module.MedicalRecordDetailPage,
   })),
 );
 const PrescriptionsPage = lazy(() =>
@@ -90,6 +95,24 @@ function AppShell() {
     };
   }, [profile.language, profile.theme]);
 
+  useEffect(() => {
+    function handlePointerDown(event: PointerEvent) {
+      const target = event.target as HTMLElement | null;
+
+      if (target?.closest("[data-sonner-toaster]")) {
+        return;
+      }
+
+      toast.dismiss();
+    }
+
+    document.addEventListener("pointerdown", handlePointerDown);
+
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+    };
+  }, []);
+
   return (
     <>
       <Router>
@@ -106,6 +129,7 @@ function AppShell() {
                 <Route path="/patients" element={<PatientsPage />} />
                 <Route path="/appointments" element={<AppointmentsPage />} />
                 <Route path="/records" element={<MedicalRecordsPage />} />
+                <Route path="/records/:recordId" element={<MedicalRecordDetailPage />} />
                 <Route path="/prescriptions" element={<PrescriptionsPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/notifications" element={<NotificationsPage />} />

@@ -11,6 +11,7 @@ import {
   createMedicalRecord as createMedicalRecordAction,
   createPatient as createPatientAction,
   createPrescription as createPrescriptionAction,
+  deletePrescription as deletePrescriptionAction,
   describeAppointmentStatus,
   loadPrototypeSnapshot,
   markAllNotificationsAsRead,
@@ -20,6 +21,7 @@ import {
   toggleTask,
   updateAppointmentStatus,
   updatePatient as updatePatientAction,
+  updatePrescription as updatePrescriptionAction,
   updateProfileSettings,
 } from "../services/prototypeApi";
 import {
@@ -35,6 +37,7 @@ import {
   ProfileSettings,
   PrototypeSnapshot,
   TaskItem,
+  UpdatePrescriptionInput,
   UpdatePatientInput,
 } from "../types/medical";
 
@@ -85,6 +88,11 @@ interface AppDataContextValue extends PrototypeSnapshot {
   ) => Promise<Appointment>;
   addMedicalRecord: (input: NewMedicalRecordInput) => Promise<MedicalRecord>;
   addPrescription: (input: NewPrescriptionInput) => Promise<Prescription>;
+  savePrescription: (
+    prescriptionId: string,
+    updates: UpdatePrescriptionInput,
+  ) => Promise<Prescription>;
+  deletePrescription: (prescriptionId: string) => Promise<void>;
   saveProfile: (profile: ProfileSettings) => Promise<ProfileSettings>;
   toggleTaskState: (taskId: string) => Promise<TaskItem>;
   markNotificationRead: (notificationId: string) => Promise<void>;
@@ -266,6 +274,54 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     return prescription;
   }
 
+  async function savePrescription(
+    prescriptionId: string,
+    updates: UpdatePrescriptionInput,
+  ) {
+    const prescription = await updatePrescriptionAction(prescriptionId, updates);
+    const patient = snapshot.patients.find((item) => item.id === prescription.patientId);
+    const notification = await pushNotification({
+      title: "Назначение обновлено",
+      body: `Изменения по препарату ${prescription.medication} для ${patient?.fullName ?? "пациента"} сохранены.`,
+      actionUrl: "/prescriptions",
+    });
+
+    setSnapshot((current) => ({
+      ...current,
+      prescriptions: current.prescriptions.map((item) =>
+        item.id === prescriptionId ? prescription : item,
+      ),
+      notifications: [notification, ...current.notifications],
+    }));
+
+    toast.success("Назначение обновлено", {
+      description: `${prescription.medication} сохранен в актуальной версии.`,
+    });
+
+    return prescription;
+  }
+
+  async function deletePrescription(prescriptionId: string) {
+    const prescription = await deletePrescriptionAction(prescriptionId);
+    const patient = snapshot.patients.find((item) => item.id === prescription.patientId);
+    const notification = await pushNotification({
+      title: "Назначение удалено",
+      body: `Назначение ${prescription.medication} для ${patient?.fullName ?? "пациента"} удалено из демо-прототипа.`,
+      actionUrl: "/prescriptions",
+      severity: "NORMAL",
+    });
+
+    setSnapshot((current) => ({
+      ...current,
+      prescriptions: current.prescriptions.filter((item) => item.id !== prescriptionId),
+      notifications: [notification, ...current.notifications],
+    }));
+
+    toast.success("Назначение удалено", {
+      description: `${prescription.medication} больше не отображается в списке.`,
+    });
+  }
+
   async function saveProfile(profile: ProfileSettings) {
     const nextProfile = await updateProfileSettings(profile);
     const notification = await pushNotification({
@@ -337,6 +393,8 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     setAppointmentStatus,
     addMedicalRecord,
     addPrescription,
+    savePrescription,
+    deletePrescription,
     saveProfile,
     toggleTaskState,
     markNotificationRead,

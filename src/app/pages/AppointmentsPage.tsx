@@ -64,7 +64,12 @@ function mergeDateTime(dateValue: string, timeValue: string) {
   return setMinutes(setHours(parsedDate, hours), minutes).toISOString();
 }
 
-function buildAppointmentFormState(initialDate: Date, initialPatientId?: string | null, patients: Patient[] = []) {
+function buildAppointmentFormState(
+  initialDate: Date,
+  initialPatientId?: string | null,
+  patients: Patient[] = [],
+  initialTime = "10:00",
+) {
   return {
     patientId: initialPatientId ?? patients[0]?.id ?? "",
     doctorName: "Иванов И.И.",
@@ -72,7 +77,7 @@ function buildAppointmentFormState(initialDate: Date, initialPatientId?: string 
     room: "101",
     type: "Консультация",
     date: toDateInput(initialDate),
-    time: "10:00",
+    time: initialTime,
     durationMinutes: "30",
     status: "pending" as AppointmentStatus,
     notes: "",
@@ -90,6 +95,7 @@ function AppointmentDialog({
   onSubmit,
   initialDate,
   initialPatientId,
+  initialTime,
 }: {
   open: boolean;
   patients: Patient[];
@@ -97,10 +103,11 @@ function AppointmentDialog({
   onSubmit: (payload: NewAppointmentInput) => Promise<void>;
   initialDate: Date;
   initialPatientId?: string | null;
+  initialTime?: string;
 }) {
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState(() =>
-    buildAppointmentFormState(initialDate, initialPatientId, patients),
+    buildAppointmentFormState(initialDate, initialPatientId, patients, initialTime),
   );
   const isValidForm =
     form.patientId.trim().length > 0 &&
@@ -114,8 +121,8 @@ function AppointmentDialog({
       return;
     }
 
-    setForm(buildAppointmentFormState(initialDate, initialPatientId, patients));
-  }, [initialDate, initialPatientId, patients, open]);
+    setForm(buildAppointmentFormState(initialDate, initialPatientId, patients, initialTime));
+  }, [initialDate, initialPatientId, initialTime, patients, open]);
 
   async function handleSubmit() {
     setSubmitting(true);
@@ -167,6 +174,7 @@ export function AppointmentsPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [createOpen, setCreateOpen] = useState(false);
   const [createDate, setCreateDate] = useState(new Date());
+  const [createTime, setCreateTime] = useState("10:00");
   const [createPatientId, setCreatePatientId] = useState<string | null>(searchParams.get("patient"));
   const [statusUpdateLoading, setStatusUpdateLoading] = useState(false);
   const [statusToConfirm, setStatusToConfirm] = useState<AppointmentStatus | null>(null);
@@ -184,6 +192,7 @@ export function AppointmentsPage() {
     if (searchParams.get("new") === "1") {
       setCreateOpen(true);
       setCreatePatientId(searchParams.get("patient"));
+      setCreateTime("10:00");
     }
   }, [searchParams]);
 
@@ -202,30 +211,44 @@ export function AppointmentsPage() {
     setViewMode("day");
   }, [appointmentId, appointments]);
 
-  const visibleDates = viewMode === "day"
-    ? [currentDate]
-    : Array.from({ length: 7 }, (_, index) => addDays(startOfWeek(currentDate, { weekStartsOn: 1 }), index));
+  const weekDates = Array.from({ length: 7 }, (_, index) =>
+    addDays(startOfWeek(currentDate, { weekStartsOn: 1 }), index),
+  );
+  const periodDates = viewMode === "day" ? [currentDate] : weekDates;
 
-  const visibleAppointments = appointments
+  const periodAppointments = appointments
     .filter((appointment) =>
-      visibleDates.some((date) => isSameDay(new Date(appointment.startAt), date)),
+      periodDates.some((date) => isSameDay(new Date(appointment.startAt), date)),
     )
     .filter((appointment) => statusFilter === "all" || appointment.status === statusFilter);
 
+  const dayAppointments = appointments
+    .filter((appointment) => isSameDay(new Date(appointment.startAt), currentDate))
+    .filter((appointment) => statusFilter === "all" || appointment.status === statusFilter)
+    .sort((a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime());
+
   const selectedAppointment =
-    visibleAppointments.find((appointment) => appointment.id === appointmentId) ??
-    [...visibleAppointments].sort((a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime())[0] ??
+    dayAppointments.find((appointment) => appointment.id === appointmentId) ??
+    dayAppointments[0] ??
     null;
 
-  const totalSlots = visibleDates.length * timeSlots.length;
-  const freeSlots = Math.max(totalSlots - visibleAppointments.length, 0);
-  const confirmedCount = visibleAppointments.filter((item) => item.status === "confirmed").length;
-  const pendingCount = visibleAppointments.filter((item) => item.status === "pending").length;
+  const totalSlots = periodDates.length * timeSlots.length;
+  const freeSlots = Math.max(totalSlots - periodAppointments.length, 0);
+  const confirmedCount = periodAppointments.filter((item) => item.status === "confirmed").length;
+  const pendingCount = periodAppointments.filter((item) => item.status === "pending").length;
+
+  function focusDate(date: Date, nextViewMode: ViewMode = "day") {
+    const next = new URLSearchParams(searchParams);
+    next.delete("appointment");
+    setCurrentDate(date);
+    setViewMode(nextViewMode);
+    setSearchParams(next);
+  }
 
   const summaryCards = [
     {
       label: "Всего приемов",
-      value: visibleAppointments.length,
+      value: periodAppointments.length,
       tone: "bg-primary/10 text-primary",
       onClick: () => {
         const next = new URLSearchParams(searchParams);
@@ -259,6 +282,7 @@ export function AppointmentsPage() {
       tone: "bg-sky-100 text-sky-700",
       onClick: () => {
         setCreateDate(currentDate);
+        setCreateTime("10:00");
         setCreateOpen(true);
       },
     },
@@ -316,7 +340,7 @@ export function AppointmentsPage() {
       <div className="mx-auto max-w-[1440px] p-6">
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div><h1 className="mb-1 text-2xl font-semibold text-foreground">Расписание приемов</h1><p className="text-sm text-muted-foreground">День/неделя, создание новой записи, свободные слоты и изменение статуса через UI.</p></div>
-          <Button className="rounded-2xl" onClick={() => { setCreateDate(currentDate); setCreatePatientId(searchParams.get("patient")); setCreateOpen(true); }}><Plus className="mr-2 size-4" />Новая запись</Button>
+          <Button className="rounded-2xl" onClick={() => { setCreateDate(currentDate); setCreateTime("10:00"); setCreatePatientId(searchParams.get("patient")); setCreateOpen(true); }}><Plus className="mr-2 size-4" />Новая запись</Button>
         </div>
 
         {selectedPatientFromContext ? (
@@ -342,23 +366,66 @@ export function AppointmentsPage() {
               <div className="flex items-center gap-2">
                 <Button variant="outline" className="rounded-2xl" onClick={() => moveRange("prev")}><ChevronLeft className="size-4" /></Button>
                 <div className="min-w-[220px] rounded-2xl bg-muted px-4 py-2 text-center text-sm font-medium text-foreground">
-                  {viewMode === "day" ? format(currentDate, "dd MMMM yyyy", { locale: ru }) : `${format(visibleDates[0], "dd MMM", { locale: ru })} - ${format(visibleDates[visibleDates.length - 1], "dd MMM", { locale: ru })}`}
+                  {viewMode === "day"
+                    ? format(currentDate, "dd MMMM yyyy", { locale: ru })
+                    : `${format(weekDates[0], "dd MMM", { locale: ru })} - ${format(weekDates[weekDates.length - 1], "dd MMM", { locale: ru })}`}
                 </div>
                 <Button variant="outline" className="rounded-2xl" onClick={() => moveRange("next")}><ChevronRight className="size-4" /></Button>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1 rounded-2xl bg-muted p-1">
-                  <button onClick={() => setViewMode("day")} className={`rounded-2xl px-4 py-2 text-sm ${viewMode === "day" ? "bg-card shadow-sm" : "text-muted-foreground"}`}>День</button>
-                  <button onClick={() => setViewMode("week")} className={`rounded-2xl px-4 py-2 text-sm ${viewMode === "week" ? "bg-card shadow-sm" : "text-muted-foreground"}`}>Неделя</button>
+                <div className="flex items-center gap-1 rounded-[10px] bg-muted p-1">
+                  <button onClick={() => setViewMode("day")} className={`rounded-[10px] border px-4 py-2 text-sm transition-all duration-200 ease-out ${viewMode === "day" ? "border-sky-300/55 bg-sky-500/10 text-sky-900 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50" : "border-transparent text-muted-foreground hover:border-sky-300/35 hover:bg-sky-500/[0.05] hover:text-foreground dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>День</button>
+                  <button onClick={() => setViewMode("week")} className={`rounded-[10px] border px-4 py-2 text-sm transition-all duration-200 ease-out ${viewMode === "week" ? "border-sky-300/55 bg-sky-500/10 text-sky-900 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50" : "border-transparent text-muted-foreground hover:border-sky-300/35 hover:bg-sky-500/[0.05] hover:text-foreground dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>Неделя</button>
                 </div>
-                <Button variant="outline" className="rounded-2xl" onClick={() => setCurrentDate(new Date())}>Сегодня</Button>
+                <Button
+                  variant="outline"
+                  className={`rounded-[10px] transition-all duration-200 ease-out ${isSameDay(currentDate, new Date()) ? "border-sky-300/55 bg-sky-500/10 text-sky-900 hover:bg-sky-500/10 hover:text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50 dark:hover:bg-sky-400/10 dark:hover:text-sky-50" : "border-border"}`}
+                  onClick={() => focusDate(new Date(), "day")}
+                >
+                  Сегодня
+                </Button>
+              </div>
+            </div>
+
+            <div className="mb-5 overflow-x-auto pb-2">
+              <div className="flex min-w-max gap-3">
+                {weekDates.map((date) => {
+                  const dailyCount = appointments.filter((appointment) =>
+                    isSameDay(new Date(appointment.startAt), date) &&
+                    (statusFilter === "all" || appointment.status === statusFilter),
+                  ).length;
+                  const isActiveDate = isSameDay(date, currentDate);
+                  const isTodayDate = isSameDay(date, new Date());
+
+                  return (
+                    <button
+                      key={date.toISOString()}
+                      onClick={() => focusDate(date, "day")}
+                      className={`min-w-[108px] rounded-[10px] border px-4 py-3 text-left transition-all duration-200 ease-out ${
+                        isActiveDate
+                          ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10"
+                          : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.05] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
+                      }`}
+                    >
+                      <p className={`text-[11px] uppercase tracking-[0.18em] ${isTodayDate ? "text-sky-700 dark:text-sky-300" : "text-muted-foreground"}`}>
+                        {format(date, "EE", { locale: ru })}
+                      </p>
+                      <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">
+                        {format(date, "dd", { locale: ru })}
+                      </p>
+                      <p className="mt-1 text-xs text-muted-foreground">
+                        {dailyCount > 0 ? `${dailyCount} запис.` : "Нет записей"}
+                      </p>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
             <div className="mb-5 flex flex-wrap gap-2">
               <Button
-                variant={statusFilter === "all" ? "default" : "outline"}
-                className="rounded-2xl"
+                variant="outline"
+                className={`rounded-[10px] transition-all duration-200 ease-out ${statusFilter === "all" ? "border-sky-300/55 bg-sky-500/10 text-sky-900 hover:bg-sky-500/10 hover:text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50 dark:hover:bg-sky-400/10 dark:hover:text-sky-50" : "border-border"}`}
                 onClick={() => {
                   const next = new URLSearchParams(searchParams);
                   next.delete("status");
@@ -370,8 +437,8 @@ export function AppointmentsPage() {
               {(["pending", "confirmed", "completed", "cancelled"] as AppointmentStatus[]).map((status) => (
                 <Button
                   key={status}
-                  variant={statusFilter === status ? "default" : "outline"}
-                  className="rounded-2xl"
+                  variant="outline"
+                  className={`rounded-[10px] transition-all duration-200 ease-out ${statusFilter === status ? "border-sky-300/55 bg-sky-500/10 text-sky-900 hover:bg-sky-500/10 hover:text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50 dark:hover:bg-sky-400/10 dark:hover:text-sky-50" : "border-border"}`}
                   onClick={() => {
                     const next = new URLSearchParams(searchParams);
                     next.set("status", status);
@@ -383,17 +450,35 @@ export function AppointmentsPage() {
               ))}
             </div>
 
-            <div className={`grid gap-2 ${viewMode === "day" ? "grid-cols-[88px_1fr]" : `grid-cols-[88px_repeat(${visibleDates.length},minmax(120px,1fr))]`}`}>
+            <div className="mb-4 flex items-center justify-between gap-3">
+              <div>
+                <p className="text-sm font-semibold text-foreground">
+                  Записи на {format(currentDate, "dd MMMM", { locale: ru })}
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  {dayAppointments.length > 0 ? `${dayAppointments.length} приемов в выбранный день` : "В выбранный день пока нет записей"}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-2 grid-cols-[88px_1fr]">
               <div />
-              {visibleDates.map((date) => <div key={date.toISOString()} className={`rounded-2xl px-3 py-3 text-center text-sm ${isSameDay(date, new Date()) ? "bg-primary text-primary-foreground" : "bg-muted text-foreground"}`}><p className="text-xs uppercase">{format(date, "EE", { locale: ru })}</p><p className="font-semibold">{format(date, "dd", { locale: ru })}</p></div>)}
+              <div className={`rounded-[10px] border px-4 py-3 text-center ${isSameDay(currentDate, new Date()) ? "border-sky-300/55 bg-sky-500/10 text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50" : "border-transparent bg-muted text-foreground"}`}>
+                <p className="text-xs uppercase tracking-[0.18em]">{format(currentDate, "EEEE", { locale: ru })}</p>
+                <p className="mt-1 text-2xl font-semibold tabular-nums">{format(currentDate, "dd", { locale: ru })}</p>
+              </div>
               {timeSlots.map((slot) => (
                 <div key={slot} className="contents">
                   <div key={`${slot}-label`} className="pt-5 text-sm text-muted-foreground">{slot}</div>
-                  {visibleDates.map((date) => {
-                    const appointment = visibleAppointments.find((item) => isSameDay(new Date(item.startAt), date) && format(new Date(item.startAt), "HH:mm") === slot);
+                  {(() => {
+                    const appointment = dayAppointments.find(
+                      (item) => format(new Date(item.startAt), "HH:mm") === slot,
+                    );
+                    const isSelectedAppointment = appointment?.id === selectedAppointment?.id;
+
                     return (
                       <button
-                        key={`${date.toISOString()}-${slot}`}
+                        key={`${currentDate.toISOString()}-${slot}`}
                         onClick={() => {
                           if (appointment) {
                             const next = new URLSearchParams(searchParams);
@@ -401,12 +486,13 @@ export function AppointmentsPage() {
                             next.set("patient", appointment.patientId);
                             setSearchParams(next);
                           } else {
-                            setCreateDate(date);
+                            setCreateDate(currentDate);
+                            setCreateTime(slot);
                             setCreatePatientId(searchParams.get("patient"));
                             setCreateOpen(true);
                           }
                         }}
-                        className={`min-h-[72px] rounded-2xl border p-3 text-left transition-colors ${appointment ? "border-primary/20 bg-primary/5 hover:bg-primary/10" : "border-border hover:bg-accent/40"}`}
+                        className={`min-h-[72px] rounded-[10px] border p-3 text-left transition-all duration-200 ease-out ${appointment ? isSelectedAppointment ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-sky-200/45 bg-sky-500/[0.05] hover:bg-sky-500/[0.08] dark:border-sky-400/18 dark:bg-sky-400/[0.06] dark:hover:bg-sky-400/[0.1]" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}
                       >
                         {appointment ? (
                           <>
@@ -421,7 +507,7 @@ export function AppointmentsPage() {
                         )}
                       </button>
                     );
-                  })}
+                  })()}
                 </div>
               ))}
             </div>
@@ -448,7 +534,7 @@ export function AppointmentsPage() {
                     </div>
                     <div className="mt-6 grid grid-cols-2 gap-2">
                       {(["confirmed", "pending", "completed", "cancelled"] as AppointmentStatus[]).map((status) => (
-                        <Button key={status} variant={selectedAppointment.status === status ? "default" : "outline"} className="rounded-2xl" disabled={statusUpdateLoading} onClick={() => { void handleStatusChange(status); }}>{appointmentStatusLabels[status]}</Button>
+                        <Button key={status} variant="outline" className={`rounded-[10px] transition-all duration-200 ease-out ${selectedAppointment.status === status ? "border-sky-300/55 bg-sky-500/10 text-sky-900 hover:bg-sky-500/10 hover:text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50 dark:hover:bg-sky-400/10 dark:hover:text-sky-50" : "border-border"}`} disabled={statusUpdateLoading} onClick={() => { void handleStatusChange(status); }}>{appointmentStatusLabels[status]}</Button>
                       ))}
                     </div>
                     <div className="mt-6 flex flex-wrap gap-3">
@@ -465,7 +551,7 @@ export function AppointmentsPage() {
           </section>
         </div>
 
-        <AppointmentDialog open={createOpen} patients={patients} initialDate={createDate} initialPatientId={createPatientId} onOpenChange={(open) => { setCreateOpen(open); if (!open && searchParams.get("new")) { const next = new URLSearchParams(window.location.search); next.delete("new"); setSearchParams(next); } }} onSubmit={handleCreate} />
+        <AppointmentDialog open={createOpen} patients={patients} initialDate={createDate} initialTime={createTime} initialPatientId={createPatientId} onOpenChange={(open) => { setCreateOpen(open); if (!open && searchParams.get("new")) { const next = new URLSearchParams(window.location.search); next.delete("new"); setSearchParams(next); } }} onSubmit={handleCreate} />
         <AlertDialog open={statusToConfirm === "cancelled"} onOpenChange={(open) => { if (!open) { setStatusToConfirm(null); } }}>
           <AlertDialogContent className="rounded-3xl">
             <AlertDialogHeader>

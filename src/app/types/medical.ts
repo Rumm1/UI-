@@ -173,6 +173,11 @@ export interface NewPatientInput {
   diagnosis: string;
   status: PatientStatus;
   notes: string;
+  overview?: string;
+  lastDoctor?: string;
+  emergencyContact?: string;
+  allergies?: string[];
+  metrics?: Partial<PatientMetrics>;
 }
 
 export interface UpdatePatientInput extends Partial<NewPatientInput> {
@@ -217,3 +222,5 @@ export interface NewPrescriptionInput {
   status?: PrescriptionStatus;
   expiresAt: string;
 }
+
+export interface UpdatePrescriptionInput extends Partial<NewPrescriptionInput> {}

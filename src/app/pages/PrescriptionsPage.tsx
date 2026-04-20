@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { Pill, Plus, Search } from "lucide-react";
+import { PencilLine, Pill, Plus, Search, Trash2 } from "lucide-react";
 import { useNavigate, useSearchParams } from "react-router";
 import { useAppData } from "../contexts/AppDataContext";
-import { MedicalRecord, NewPrescriptionInput, Patient, PrescriptionStatus } from "../types/medical";
+import { MedicalRecord, NewPrescriptionInput, Patient, Prescription, PrescriptionStatus, UpdatePrescriptionInput } from "../types/medical";
 import {
   formatCompactDate,
   getPatientById,
@@ -17,22 +17,33 @@ import { Input } from "../components/ui/input";
 import { Label } from "../components/ui/label";
 import { Textarea } from "../components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../components/ui/select";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/ui/alert-dialog";
 
 function buildPrescriptionFormState(
   patients: Patient[],
   initialPatientId?: string | null,
   initialRecord?: MedicalRecord | null,
+  initialPrescription?: Prescription | null,
 ) {
   return {
-    patientId: initialPatientId ?? patients[0]?.id ?? "",
-    doctorName: initialRecord?.doctorName ?? "Иванов И.И.",
-    medication: "",
-    dosage: "",
-    frequency: "",
-    duration: "",
-    instructions: "",
-    status: "draft" as PrescriptionStatus,
-    expiresAt: "2026-12-31",
+    patientId: initialPrescription?.patientId ?? initialPatientId ?? patients[0]?.id ?? "",
+    doctorName: initialPrescription?.doctorName ?? initialRecord?.doctorName ?? "Иванов И.И.",
+    medication: initialPrescription?.medication ?? "",
+    dosage: initialPrescription?.dosage ?? "",
+    frequency: initialPrescription?.frequency ?? "",
+    duration: initialPrescription?.duration ?? "",
+    instructions: initialPrescription?.instructions ?? "",
+    status: initialPrescription?.status ?? "draft" as PrescriptionStatus,
+    expiresAt: initialPrescription?.expiresAt.slice(0, 10) ?? "2026-12-31",
   };
 }
 
@@ -45,6 +56,8 @@ function PrescriptionDialog({
   patients,
   initialRecord,
   initialPatientId,
+  initialPrescription,
+  mode,
   onOpenChange,
   onSubmit,
 }: {
@@ -52,12 +65,14 @@ function PrescriptionDialog({
   patients: Patient[];
   initialRecord?: MedicalRecord | null;
   initialPatientId?: string | null;
+  initialPrescription?: Prescription | null;
+  mode: "create" | "edit";
   onOpenChange: (open: boolean) => void;
-  onSubmit: (payload: NewPrescriptionInput) => Promise<void>;
+  onSubmit: (payload: NewPrescriptionInput | UpdatePrescriptionInput) => Promise<void>;
 }) {
   const [submitting, setSubmitting] = useState(false);
   const [form, setForm] = useState(() =>
-    buildPrescriptionFormState(patients, initialPatientId, initialRecord),
+    buildPrescriptionFormState(patients, initialPatientId, initialRecord, initialPrescription),
   );
   const isValidForm =
     form.patientId.trim().length > 0 &&
@@ -70,8 +85,8 @@ function PrescriptionDialog({
       return;
     }
 
-    setForm(buildPrescriptionFormState(patients, initialPatientId, initialRecord));
-  }, [initialPatientId, initialRecord, open, patients]);
+    setForm(buildPrescriptionFormState(patients, initialPatientId, initialRecord, initialPrescription));
+  }, [initialPatientId, initialPrescription, initialRecord, open, patients]);
 
   async function handleSubmit() {
     setSubmitting(true);
@@ -96,7 +111,7 @@ function PrescriptionDialog({
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl rounded-3xl">
-        <DialogHeader><DialogTitle>Новое назначение</DialogTitle></DialogHeader>
+        <DialogHeader><DialogTitle>{mode === "create" ? "Новое назначение" : "Изменить назначение"}</DialogTitle></DialogHeader>
         <div className="grid gap-4 md:grid-cols-2">
           <div className="md:col-span-2"><Label>Пациент</Label><Select value={form.patientId} onValueChange={(value) => setForm((c) => ({ ...c, patientId: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{patients.map((patient) => <SelectItem key={patient.id} value={patient.id}>{patient.fullName}</SelectItem>)}</SelectContent></Select></div>
           <div><Label>Врач</Label><Input value={form.doctorName} onChange={(e) => setForm((c) => ({ ...c, doctorName: e.target.value }))} /></div>
@@ -108,7 +123,7 @@ function PrescriptionDialog({
           <div><Label>Срок действия</Label><Input type="date" value={form.expiresAt} onChange={(e) => setForm((c) => ({ ...c, expiresAt: e.target.value }))} /></div>
           <div className="md:col-span-2"><Label>Инструкции</Label><Textarea rows={4} value={form.instructions} onChange={(e) => setForm((c) => ({ ...c, instructions: e.target.value }))} /></div>
         </div>
-        <DialogFooter><Button variant="outline" onClick={() => onOpenChange(false)}>Отмена</Button><Button disabled={submitting || !isValidForm} onClick={() => void handleSubmit()}>{submitting ? "Сохраняем..." : "Создать назначение"}</Button></DialogFooter>
+        <DialogFooter><Button variant="outline" onClick={() => onOpenChange(false)}>Отмена</Button><Button disabled={submitting || !isValidForm} onClick={() => void handleSubmit()}>{submitting ? "Сохраняем..." : mode === "create" ? "Создать назначение" : "Сохранить изменения"}</Button></DialogFooter>
       </DialogContent>
     </Dialog>
   );
@@ -117,9 +132,11 @@ function PrescriptionDialog({
 export function PrescriptionsPage() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
-  const { addPrescription, bootstrapError, isBootstrapping, patients, prescriptions, records, retryBootstrap } = useAppData();
+  const { addPrescription, bootstrapError, deletePrescription, isBootstrapping, patients, prescriptions, records, retryBootstrap, savePrescription } = useAppData();
   const [search, setSearch] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
+  const [editOpen, setEditOpen] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
   const patientFromParams = searchParams.get("patient");
   const recordFromParams = searchParams.get("record");
   const selectedPrescriptionId = searchParams.get("prescription");
@@ -152,21 +169,39 @@ export function PrescriptionsPage() {
     if (selectedPrescription && selectedPrescription.id !== selectedPrescriptionId) {
       const next = new URLSearchParams(searchParams);
       next.set("prescription", selectedPrescription.id);
-      next.set("patient", selectedPrescription.patientId);
       setSearchParams(next, { replace: true });
     }
   }, [searchParams, selectedPrescription, selectedPrescriptionId, setSearchParams]);
 
-  async function handleCreate(payload: NewPrescriptionInput) {
+  async function handleCreate(payload: NewPrescriptionInput | UpdatePrescriptionInput) {
     const prescription = await addPrescription({
-      ...payload,
+      ...(payload as NewPrescriptionInput),
       recordId: recordContext?.id ?? null,
     });
     const next = new URLSearchParams(searchParams);
     next.delete("new");
     next.set("prescription", prescription.id);
-    next.set("patient", prescription.patientId);
     setSearchParams(next);
+  }
+
+  async function handleEdit(payload: NewPrescriptionInput | UpdatePrescriptionInput) {
+    if (!selectedPrescription) return;
+    const prescription = await savePrescription(selectedPrescription.id, {
+      ...(payload as UpdatePrescriptionInput),
+      recordId: selectedPrescription.recordId ?? null,
+    });
+    const next = new URLSearchParams(searchParams);
+    next.set("prescription", prescription.id);
+    setSearchParams(next);
+  }
+
+  async function handleDelete() {
+    if (!selectedPrescription) return;
+    await deletePrescription(selectedPrescription.id);
+    const next = new URLSearchParams(searchParams);
+    next.delete("prescription");
+    setSearchParams(next);
+    setDeleteOpen(false);
   }
 
   const cards = [
@@ -214,7 +249,7 @@ export function PrescriptionsPage() {
     <main className="flex-1 overflow-auto">
       <div className="mx-auto max-w-[1440px] p-6">
         <div className="mb-6 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div><h1 className="mb-1 text-2xl font-semibold text-foreground">Назначения</h1><p className="text-sm text-muted-foreground">Живой список рецептов и назначений со статусами active / expired / draft.</p></div>
+          <div><h1 className="mb-1 text-2xl font-semibold text-foreground">Назначения</h1><p className="text-sm text-muted-foreground">Живой список рецептов и назначений со статусами active / expired / draft и действиями редактирования.</p></div>
           <Button className="rounded-2xl" onClick={() => setCreateOpen(true)}><Plus className="mr-2 size-4" />Создать назначение</Button>
         </div>
 
@@ -253,7 +288,7 @@ export function PrescriptionsPage() {
                 {filteredPrescriptions.map((item) => {
                   const patient = getPatientById(patients, item.patientId);
                   return (
-                    <button key={item.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("prescription", item.id); next.set("patient", item.patientId); setSearchParams(next); }} className={`w-full rounded-2xl border p-4 text-left transition-colors hover:bg-accent/40 ${selectedPrescription?.id === item.id ? "border-primary bg-primary/5" : "border-border"}`}>
+                    <button key={item.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("prescription", item.id); setSearchParams(next); }} className={`w-full rounded-[10px] border p-4 text-left transition-all duration-200 ease-out ${selectedPrescription?.id === item.id ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.05] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>
                       <div className="mb-2 flex items-center justify-between gap-3"><div><p className="font-medium text-foreground">{item.medication}</p><p className="text-sm text-muted-foreground">{patient?.fullName}</p></div><StatusBadge label={prescriptionStatusLabels[item.status]} status={item.status} /></div>
                       <p className="text-sm text-muted-foreground">{item.dosage} • {item.frequency}</p>
                     </button>
@@ -280,8 +315,10 @@ export function PrescriptionsPage() {
                       <div><p className="text-xs text-muted-foreground">Инструкции</p><p className="text-sm text-foreground">{selectedPrescription.instructions}</p></div>
                       <div className="grid gap-3 md:grid-cols-2"><div><p className="text-xs text-muted-foreground">Создан</p><p className="text-sm font-medium text-foreground">{formatCompactDate(selectedPrescription.createdAt)}</p></div><div><p className="text-xs text-muted-foreground">Действует до</p><p className="text-sm font-medium text-foreground">{formatCompactDate(selectedPrescription.expiresAt)}</p></div></div>
                       <div className="flex flex-wrap gap-3">
-                        {selectedPrescription.recordId ? <Button className="rounded-2xl" onClick={() => navigate(`/records?record=${selectedPrescription.recordId}&patient=${selectedPrescription.patientId}`)}>Открыть медзапись</Button> : null}
+                        {selectedPrescription.recordId ? <Button className="rounded-2xl" onClick={() => navigate(`/records/${selectedPrescription.recordId}`)}>Открыть медзапись</Button> : null}
                         <Button variant="outline" className="rounded-2xl" onClick={() => navigate(`/patients?patient=${selectedPrescription.patientId}`)}>Открыть пациента</Button>
+                        <Button variant="outline" className="rounded-2xl" onClick={() => setEditOpen(true)}><PencilLine className="mr-2 size-4" />Изменить</Button>
+                        <Button variant="outline" className="rounded-2xl text-destructive hover:text-destructive" onClick={() => setDeleteOpen(true)}><Trash2 className="mr-2 size-4" />Удалить</Button>
                       </div>
                     </div>
                   </>
@@ -293,7 +330,25 @@ export function PrescriptionsPage() {
           </section>
         </div>
 
-        <PrescriptionDialog open={createOpen} patients={patients} initialPatientId={patientFromParams} initialRecord={recordContext} onOpenChange={(open) => { setCreateOpen(open); if (!open && searchParams.get("new")) { const next = new URLSearchParams(window.location.search); next.delete("new"); setSearchParams(next); } }} onSubmit={handleCreate} />
+        <PrescriptionDialog open={createOpen} mode="create" patients={patients} initialPatientId={patientFromParams} initialRecord={recordContext} onOpenChange={(open) => { setCreateOpen(open); if (!open && searchParams.get("new")) { const next = new URLSearchParams(window.location.search); next.delete("new"); setSearchParams(next); } }} onSubmit={handleCreate} />
+        <PrescriptionDialog open={editOpen} mode="edit" patients={patients} initialPrescription={selectedPrescription ?? undefined} onOpenChange={setEditOpen} onSubmit={handleEdit} />
+
+        <AlertDialog open={deleteOpen} onOpenChange={setDeleteOpen}>
+          <AlertDialogContent className="rounded-3xl">
+            <AlertDialogHeader>
+              <AlertDialogTitle>Удалить назначение?</AlertDialogTitle>
+              <AlertDialogDescription>
+                Назначение будет удалено из demo-прототипа и исчезнет из списка рецептов.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="rounded-2xl">Отмена</AlertDialogCancel>
+              <AlertDialogAction className="rounded-2xl" onClick={() => { void handleDelete(); }}>
+                Удалить
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </main>
   );

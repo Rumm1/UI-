@@ -38,6 +38,29 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
 
 type SortValue = "recent" | "name" | "risk";
 
+function buildPatientFormState(patient?: Patient) {
+  return {
+    fullName: patient?.fullName ?? "",
+    gender: patient?.gender ?? ("female" as const),
+    birthDate: patient?.birthDate ?? "1990-01-01",
+    phone: patient?.phone ?? "",
+    email: patient?.email ?? "",
+    city: patient?.city ?? "Москва",
+    address: patient?.address ?? "",
+    diagnosis: patient?.diagnosis ?? "",
+    status: patient?.status ?? ("active" as PatientStatus),
+    overview: patient?.overview ?? "Новый пациент зарегистрирован в демонстрационном режиме.",
+    lastDoctor: patient?.lastDoctor ?? "Иван Иванов",
+    emergencyContact: patient?.emergencyContact ?? "Контакт будет добавлен позже",
+    allergies: patient?.allergies.join(", ") ?? "",
+    notes: patient?.notes ?? "",
+    bloodPressure: patient?.metrics.bloodPressure ?? "120/80",
+    pulse: String(patient?.metrics.pulse ?? 72),
+    oxygenLevel: String(patient?.metrics.oxygenLevel ?? 98),
+    temperature: String(patient?.metrics.temperature ?? 36.6),
+  };
+}
+
 function PatientFormDialog({
   open,
   patient,
@@ -52,42 +75,60 @@ function PatientFormDialog({
   onSubmit: (payload: NewPatientInput | UpdatePatientInput) => Promise<void>;
 }) {
   const [submitting, setSubmitting] = useState(false);
-  const [form, setForm] = useState({
-    fullName: "",
-    gender: "female" as const,
-    birthDate: "1990-01-01",
-    phone: "",
-    email: "",
-    city: "Москва",
-    address: "",
-    diagnosis: "",
-    status: "active" as PatientStatus,
-    notes: "",
-  });
+  const [form, setForm] = useState(() => buildPatientFormState(patient));
+  const numericPulse = Number(form.pulse);
+  const numericOxygenLevel = Number(form.oxygenLevel);
+  const numericTemperature = Number(form.temperature);
   const isValidForm =
     form.fullName.trim().length > 2 &&
     form.phone.trim().length > 0 &&
-    form.birthDate.trim().length > 0;
+    form.birthDate.trim().length > 0 &&
+    form.bloodPressure.trim().length > 0 &&
+    form.pulse.trim().length > 0 &&
+    form.oxygenLevel.trim().length > 0 &&
+    form.temperature.trim().length > 0 &&
+    Number.isFinite(numericPulse) &&
+    Number.isFinite(numericOxygenLevel) &&
+    Number.isFinite(numericTemperature);
 
   useEffect(() => {
-    setForm({
-      fullName: patient?.fullName ?? "",
-      gender: patient?.gender ?? "female",
-      birthDate: patient?.birthDate ?? "1990-01-01",
-      phone: patient?.phone ?? "",
-      email: patient?.email ?? "",
-      city: patient?.city ?? "Москва",
-      address: patient?.address ?? "",
-      diagnosis: patient?.diagnosis ?? "",
-      status: patient?.status ?? "active",
-      notes: patient?.notes ?? "",
-    });
+    if (!open) {
+      return;
+    }
+
+    setForm(buildPatientFormState(patient));
   }, [open, patient]);
 
   async function handleSubmit() {
+    const allergies = form.allergies
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean);
+
     setSubmitting(true);
     try {
-      await onSubmit(form);
+      await onSubmit({
+        fullName: form.fullName.trim(),
+        gender: form.gender,
+        birthDate: form.birthDate,
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        city: form.city.trim(),
+        address: form.address.trim(),
+        diagnosis: form.diagnosis.trim(),
+        status: form.status,
+        notes: form.notes.trim(),
+        overview: form.overview.trim(),
+        lastDoctor: form.lastDoctor.trim(),
+        emergencyContact: form.emergencyContact.trim(),
+        allergies,
+        metrics: {
+          bloodPressure: form.bloodPressure.trim(),
+          pulse: numericPulse,
+          oxygenLevel: numericOxygenLevel,
+          temperature: numericTemperature,
+        },
+      });
       onOpenChange(false);
     } finally {
       setSubmitting(false);
@@ -102,6 +143,7 @@ function PatientFormDialog({
           <DialogDescription>Все данные сохраняются в mock-store и сразу попадают в demo-прототип.</DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 md:grid-cols-2">
+          <div className="md:col-span-2 text-xs uppercase tracking-[0.16em] text-muted-foreground">Основные данные</div>
           <div className="md:col-span-2"><Label>ФИО</Label><Input value={form.fullName} onChange={(e) => setForm((c) => ({ ...c, fullName: e.target.value }))} /></div>
           <div><Label>Пол</Label><Select value={form.gender} onValueChange={(value: "female" | "male") => setForm((c) => ({ ...c, gender: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="female">Женский</SelectItem><SelectItem value="male">Мужской</SelectItem></SelectContent></Select></div>
           <div><Label>Дата рождения</Label><Input type="date" value={form.birthDate} onChange={(e) => setForm((c) => ({ ...c, birthDate: e.target.value }))} /></div>
@@ -111,6 +153,15 @@ function PatientFormDialog({
           <div><Label>Статус</Label><Select value={form.status} onValueChange={(value: PatientStatus) => setForm((c) => ({ ...c, status: value }))}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent><SelectItem value="active">Активен</SelectItem><SelectItem value="follow-up">Нужен контроль</SelectItem><SelectItem value="inactive">Неактивен</SelectItem></SelectContent></Select></div>
           <div className="md:col-span-2"><Label>Адрес</Label><Input value={form.address} onChange={(e) => setForm((c) => ({ ...c, address: e.target.value }))} /></div>
           <div className="md:col-span-2"><Label>Диагноз</Label><Input value={form.diagnosis} onChange={(e) => setForm((c) => ({ ...c, diagnosis: e.target.value }))} /></div>
+          <div className="md:col-span-2"><Label>Описание в карточке</Label><Textarea rows={3} value={form.overview} onChange={(e) => setForm((c) => ({ ...c, overview: e.target.value }))} /></div>
+          <div><Label>Последний врач</Label><Input value={form.lastDoctor} onChange={(e) => setForm((c) => ({ ...c, lastDoctor: e.target.value }))} /></div>
+          <div><Label>Контакт ЧС</Label><Input value={form.emergencyContact} onChange={(e) => setForm((c) => ({ ...c, emergencyContact: e.target.value }))} /></div>
+          <div className="md:col-span-2"><Label>Аллергии</Label><Input value={form.allergies} placeholder="Например: Пенициллин, йод" onChange={(e) => setForm((c) => ({ ...c, allergies: e.target.value }))} /></div>
+          <div className="md:col-span-2 text-xs uppercase tracking-[0.16em] text-muted-foreground">Показатели</div>
+          <div><Label>АД</Label><Input value={form.bloodPressure} onChange={(e) => setForm((c) => ({ ...c, bloodPressure: e.target.value }))} /></div>
+          <div><Label>Пульс</Label><Input type="number" min="0" value={form.pulse} onChange={(e) => setForm((c) => ({ ...c, pulse: e.target.value }))} /></div>
+          <div><Label>SpO₂</Label><Input type="number" min="0" max="100" value={form.oxygenLevel} onChange={(e) => setForm((c) => ({ ...c, oxygenLevel: e.target.value }))} /></div>
+          <div><Label>Температура</Label><Input type="number" step="0.1" value={form.temperature} onChange={(e) => setForm((c) => ({ ...c, temperature: e.target.value }))} /></div>
           <div className="md:col-span-2"><Label>Комментарий</Label><Textarea rows={4} value={form.notes} onChange={(e) => setForm((c) => ({ ...c, notes: e.target.value }))} /></div>
         </div>
         <DialogFooter>
@@ -244,7 +295,7 @@ export function PatientsPage() {
                 {filteredPatients.map((patient) => {
                   const nextForPatient = getPatientNextAppointment(patient.id, appointments);
                   return (
-                    <button key={patient.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("patient", patient.id); setSearchParams(next); }} className={`w-full rounded-2xl border p-4 text-left transition-all hover:border-primary/40 hover:bg-accent/40 ${selectedPatient?.id === patient.id ? "border-primary bg-primary/5" : "border-border"}`}>
+                    <button key={patient.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("patient", patient.id); setSearchParams(next); }} className={`w-full rounded-[10px] border p-4 text-left transition-all duration-200 ease-out ${selectedPatient?.id === patient.id ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.05] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>
                       <div className="mb-3 flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3">
                           <div className="flex size-12 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">{patient.initials}</div>
@@ -314,7 +365,7 @@ export function PatientsPage() {
                   <TabsList className="mb-4 grid w-full grid-cols-4"><TabsTrigger value="overview">Обзор</TabsTrigger><TabsTrigger value="history">История</TabsTrigger><TabsTrigger value="appointments">Приемы</TabsTrigger><TabsTrigger value="prescriptions">Назначения</TabsTrigger></TabsList>
                   <TabsContent value="overview" className="space-y-4">
                     <div className="rounded-2xl border border-border p-4"><p className="mb-2 text-sm font-semibold text-foreground">Основная информация</p><div className="grid gap-3 text-sm md:grid-cols-2"><div><p className="text-muted-foreground">Диагноз</p><p className="font-medium text-foreground">{selectedPatient.diagnosis}</p></div><div><p className="text-muted-foreground">Последний врач</p><p className="font-medium text-foreground">{selectedPatient.lastDoctor}</p></div><div><p className="text-muted-foreground">Аллергии</p><p className="font-medium text-foreground">{selectedPatient.allergies.length ? selectedPatient.allergies.join(", ") : "Не указаны"}</p></div><div><p className="text-muted-foreground">Контакт ЧС</p><p className="font-medium text-foreground">{selectedPatient.emergencyContact}</p></div></div></div>
-                    {latestRecord ? <div className="rounded-2xl border border-border p-4"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-sm font-semibold text-foreground">Последняя медицинская запись</p><StatusBadge label={recordStatusLabels[latestRecord.status]} status={latestRecord.status} /></div><p className="mb-2 text-sm text-muted-foreground">{formatDisplayDateTime(latestRecord.createdAt)} • {latestRecord.doctorName}</p><p className="text-sm text-foreground">{latestRecord.diagnosis}</p></div> : null}
+                    {latestRecord ? <button onClick={() => navigate(`/records/${latestRecord.id}`)} className="w-full rounded-2xl border border-border p-4 text-left transition-colors hover:bg-accent/40"><div className="mb-2 flex items-center justify-between gap-3"><p className="text-sm font-semibold text-foreground">Последняя медицинская запись</p><StatusBadge label={recordStatusLabels[latestRecord.status]} status={latestRecord.status} /></div><p className="mb-2 text-sm text-muted-foreground">{formatDisplayDateTime(latestRecord.createdAt)} • {latestRecord.doctorName}</p><p className="text-sm text-foreground">{latestRecord.diagnosis}</p></button> : null}
                     {nextAppointment ? <div className="rounded-2xl border border-border p-4"><p className="mb-2 text-sm font-semibold text-foreground">Следующий прием</p><p className="text-sm text-muted-foreground">{formatDisplayDateTime(nextAppointment.startAt)} • кабинет {nextAppointment.room}</p></div> : null}
                   </TabsContent>
                   <TabsContent value="history" className="space-y-3">{selectedPatient.medicalHistory.map((item) => <div key={item} className="rounded-2xl border border-border p-4 text-sm">{item}</div>)}</TabsContent>

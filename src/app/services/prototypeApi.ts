@@ -13,6 +13,7 @@ import {
   ProfileSettings,
   PrototypeSnapshot,
   TaskItem,
+  UpdatePrescriptionInput,
   UpdatePatientInput,
 } from "../types/medical";
 import { Notification, NotificationSeverity } from "../types/notification";
@@ -85,6 +86,15 @@ export async function loadPrototypeSnapshot() {
 }
 
 export async function createPatient(input: NewPatientInput) {
+  const defaultMetrics = {
+    bloodPressure: "120/80",
+    pulse: 72,
+    temperature: 36.6,
+    oxygenLevel: 98,
+    weightKg: 70,
+    heightCm: 170,
+  };
+
   const patient: Patient = {
     id: createId("patient"),
     fullName: input.fullName,
@@ -100,20 +110,16 @@ export async function createPatient(input: NewPatientInput) {
     status: input.status,
     riskLevel: "medium",
     diagnosis: input.diagnosis,
-    allergies: [],
+    allergies: input.allergies ?? [],
     chronicConditions: input.diagnosis ? [input.diagnosis] : [],
     lastVisitAt: new Date().toISOString(),
-    lastDoctor: database.profile.fullName,
-    emergencyContact: "Контакт будет добавлен позже",
-    overview: "Новый пациент зарегистрирован в демонстрационном режиме.",
+    lastDoctor: input.lastDoctor ?? database.profile.fullName,
+    emergencyContact: input.emergencyContact ?? "Контакт будет добавлен позже",
+    overview: input.overview ?? "Новый пациент зарегистрирован в демонстрационном режиме.",
     notes: input.notes,
     metrics: {
-      bloodPressure: "120/80",
-      pulse: 72,
-      temperature: 36.6,
-      oxygenLevel: 98,
-      weightKg: 70,
-      heightCm: 170,
+      ...defaultMetrics,
+      ...input.metrics,
     },
     medicalHistory: ["Профиль пациента создан из демо-формы регистрации."],
   };
@@ -129,6 +135,13 @@ export async function updatePatient(patientId: string, updates: UpdatePatientInp
   const nextPatient: Patient = {
     ...patient,
     ...updates,
+    allergies: updates.allergies ?? patient.allergies,
+    metrics: updates.metrics
+      ? {
+          ...patient.metrics,
+          ...updates.metrics,
+        }
+      : patient.metrics,
     fullName,
     initials: getInitials(fullName),
   };
@@ -211,6 +224,7 @@ export async function createMedicalRecord(input: NewMedicalRecordInput) {
           ...item,
           diagnosis: input.diagnosis,
           lastVisitAt: record.createdAt,
+          lastDoctor: input.doctorName,
         }
       : item,
   );
@@ -241,6 +255,48 @@ export async function createPrescription(input: NewPrescriptionInput) {
   database.prescriptions = [prescription, ...database.prescriptions];
   persistDatabase();
   return delay(prescription, 420);
+}
+
+export async function updatePrescription(
+  prescriptionId: string,
+  updates: UpdatePrescriptionInput,
+) {
+  const prescription = database.prescriptions.find((item) => item.id === prescriptionId);
+
+  if (!prescription) {
+    throw new Error("Prescription not found");
+  }
+
+  const patientId = updates.patientId ?? prescription.patientId;
+  getPatient(patientId);
+
+  const nextPrescription: Prescription = {
+    ...prescription,
+    ...updates,
+    patientId,
+  };
+
+  database.prescriptions = database.prescriptions.map((item) =>
+    item.id === prescriptionId ? nextPrescription : item,
+  );
+  persistDatabase();
+
+  return delay(nextPrescription, 320);
+}
+
+export async function deletePrescription(prescriptionId: string) {
+  const prescription = database.prescriptions.find((item) => item.id === prescriptionId);
+
+  if (!prescription) {
+    throw new Error("Prescription not found");
+  }
+
+  database.prescriptions = database.prescriptions.filter(
+    (item) => item.id !== prescriptionId,
+  );
+  persistDatabase();
+
+  return delay(prescription, 220);
 }
 
 export async function updateProfileSettings(profile: ProfileSettings) {

@@ -270,15 +270,15 @@ export function DashboardContent() {
             </p>
           </div>
           <div className="flex flex-col items-stretch gap-3 lg:items-end">
-            <div className="flex items-center gap-2 rounded-2xl bg-muted p-1">
+            <div className="flex items-center gap-2 rounded-[10px] bg-muted p-1">
               {periods.map((item) => (
                 <button
                   key={item}
                   onClick={() => setPeriod(item)}
-                  className={`rounded-2xl px-4 py-2 text-sm transition-colors ${
+                  className={`rounded-[10px] border px-4 py-2 text-sm transition-all duration-200 ease-out ${
                     period === item
-                      ? "bg-card text-foreground shadow-sm"
-                      : "text-muted-foreground hover:text-foreground"
+                      ? "border-sky-300/55 bg-sky-500/10 text-sky-900 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50"
+                      : "border-transparent text-muted-foreground hover:border-sky-300/35 hover:bg-sky-500/[0.05] hover:text-foreground dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
                   }`}
                 >
                   {periodLabels[item]}

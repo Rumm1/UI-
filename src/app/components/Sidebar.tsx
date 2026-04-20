@@ -60,10 +60,10 @@ export function Sidebar({ collapsed }: SidebarProps) {
             <Link
               key={item.path}
               to={item.path}
-              className={`mb-1 flex items-center gap-3 rounded-2xl px-3 py-3 transition-all ${
+              className={`mb-1 flex items-center gap-3 rounded-[10px] border px-3 py-3 transition-all duration-200 ease-out ${
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-sm"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  ? "border-sky-300/55 bg-sky-500/10 text-sky-900 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50"
+                  : "border-transparent text-muted-foreground hover:border-sky-300/35 hover:bg-sky-500/[0.06] hover:text-foreground dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08] dark:hover:text-sky-50"
               } ${collapsed ? "justify-center" : ""}`}
               title={collapsed ? item.label : undefined}
             >
