@@ -1,0 +1,1 @@
+import{p as a,v as s,ae as n}from"./index-CHIO_KgA.js";function r({label:t,status:e}){return a.jsx(s,{variant:"outline",className:`rounded-[10px] px-2.5 py-1 text-[11px] font-semibold ${n(e)}`,children:t})}export{r as S};
