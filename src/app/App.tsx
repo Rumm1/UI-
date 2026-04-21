@@ -6,6 +6,8 @@ import { Header } from "./components/Header";
 import { AppDataProvider, useAppData } from "./contexts/AppDataContext";
 import { Skeleton } from "./components/ui/skeleton";
 
+type LayoutMode = "mobile" | "tablet" | "desktop";
+
 const DashboardContent = lazy(() =>
   import("./components/DashboardContent").then((module) => ({
     default: module.DashboardContent,
@@ -48,6 +50,22 @@ const NotificationsPage = lazy(() =>
 );
 const Router = import.meta.env.PROD ? HashRouter : BrowserRouter;
 
+function getLayoutMode(): LayoutMode {
+  if (typeof window === "undefined") {
+    return "desktop";
+  }
+
+  if (window.innerWidth < 768) {
+    return "mobile";
+  }
+
+  if (window.innerWidth < 1200) {
+    return "tablet";
+  }
+
+  return "desktop";
+}
+
 function RouteFallback() {
   return (
     <main className="flex-1 overflow-auto">
@@ -66,19 +84,30 @@ function RouteFallback() {
 }
 
 function AppShell() {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { profile } = useAppData();
-  const interfaceMode = profile.interfaceMode ?? "desktop";
-  const shellFrameClass =
-    interfaceMode === "desktop"
-      ? "flex min-h-screen w-full"
-      : interfaceMode === "tablet"
-        ? "m-2 flex min-h-[calc(100vh-1rem)] w-[calc(100%-1rem)] overflow-hidden rounded-[22px] border border-border shadow-[0_24px_64px_-42px_rgba(15,35,54,0.38)]"
-        : "m-1.5 flex min-h-[calc(100vh-0.75rem)] w-[calc(100%-0.75rem)] overflow-hidden rounded-[24px] border border-border shadow-[0_24px_64px_-42px_rgba(15,35,54,0.42)]";
+  const [layoutMode, setLayoutMode] = useState<LayoutMode>(getLayoutMode);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(getLayoutMode() !== "desktop");
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   useEffect(() => {
-    setSidebarCollapsed(interfaceMode !== "desktop");
-  }, [interfaceMode]);
+    function handleResize() {
+      setLayoutMode(getLayoutMode());
+    }
+
+    window.addEventListener("resize", handleResize);
+
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  useEffect(() => {
+    setSidebarCollapsed(layoutMode !== "desktop");
+
+    if (layoutMode !== "mobile") {
+      setMobileSidebarOpen(false);
+    }
+  }, [layoutMode]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -93,7 +122,7 @@ function AppShell() {
     }
 
     root.lang = profile.language === "en" ? "en" : "ru";
-    root.dataset.interfaceMode = interfaceMode;
+    root.dataset.interfaceMode = layoutMode;
     applyThemePreference();
 
     if (profile.theme !== "system") {
@@ -108,7 +137,7 @@ function AppShell() {
       media.removeEventListener("change", applyThemePreference);
       delete root.dataset.interfaceMode;
     };
-  }, [interfaceMode, profile.language, profile.theme]);
+  }, [layoutMode, profile.language, profile.theme]);
 
   useEffect(() => {
     function handlePointerDown(event: PointerEvent) {
@@ -132,13 +161,18 @@ function AppShell() {
     <>
       <Router>
         <div className="flex min-h-screen w-full bg-background">
-          <div className={shellFrameClass}>
           <Sidebar
             collapsed={sidebarCollapsed}
+            layoutMode={layoutMode}
+            mobileOpen={mobileSidebarOpen}
             onToggleSidebar={() => setSidebarCollapsed((current) => !current)}
+            onCloseMobile={() => setMobileSidebarOpen(false)}
           />
           <div className="flex min-w-0 flex-1 flex-col">
-            <Header interfaceMode={interfaceMode} />
+            <Header
+              layoutMode={layoutMode}
+              onOpenMobileSidebar={() => setMobileSidebarOpen(true)}
+            />
             <Suspense fallback={<RouteFallback />}>
               <Routes>
                 <Route path="/" element={<DashboardContent />} />
@@ -152,7 +186,6 @@ function AppShell() {
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </Suspense>
-          </div>
           </div>
         </div>
       </Router>

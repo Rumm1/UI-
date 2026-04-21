@@ -3,19 +3,15 @@ import {
   Bell,
   Globe,
   Languages,
-  Monitor,
   Palette,
   RotateCcw,
   Save,
   Settings2,
-  Smartphone,
-  TabletSmartphone,
   UserRound,
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAppData } from "../contexts/AppDataContext";
 import {
-  InterfaceMode,
   LanguagePreference,
   ProfileSettings,
   ThemePreference,
@@ -54,38 +50,28 @@ const notificationOptions: Array<{
   {
     key: "push",
     label: "Push-уведомления",
-    hint: "Показывать мгновенные уведомления в интерфейсе.",
+    hint: "Показывать мгновенные уведомления прямо в интерфейсе.",
   },
   {
     key: "email",
     label: "Email-уведомления",
-    hint: "Дублировать важные события на почту.",
+    hint: "Дублировать важные события на электронную почту.",
   },
   {
     key: "sms",
     label: "SMS-уведомления",
-    hint: "Использовать смс для срочных событий.",
+    hint: "Использовать смс только для срочных событий.",
   },
   {
     key: "criticalOnly",
     label: "Только критичные",
-    hint: "Оставлять только приоритетные уведомления.",
+    hint: "Оставлять только high/critical события.",
   },
   {
     key: "dailyDigest",
     label: "Ежедневная сводка",
-    hint: "Формировать итоговую сводку за день.",
+    hint: "Формировать итоговую сводку активности за день.",
   },
-];
-
-const interfaceModes: Array<{
-  value: InterfaceMode;
-  label: string;
-  icon: typeof Monitor;
-}> = [
-  { value: "desktop", label: "ПК", icon: Monitor },
-  { value: "tablet", label: "Планшет", icon: TabletSmartphone },
-  { value: "mobile", label: "Мобайл", icon: Smartphone },
 ];
 
 export function SettingsPage() {
@@ -151,7 +137,9 @@ export function SettingsPage() {
 
   function updateWorkingDay(
     dayId: string,
-    updater: (day: ProfileSettings["workingHours"][number]) => ProfileSettings["workingHours"][number],
+    updater: (
+      day: ProfileSettings["workingHours"][number],
+    ) => ProfileSettings["workingHours"][number],
   ) {
     setForm((current) => ({
       ...current,
@@ -241,13 +229,13 @@ export function SettingsPage() {
                   <div>
                     <p className="text-sm font-medium text-foreground">Локализация</p>
                     <p className="text-xs text-muted-foreground">
-                      Язык, тема и режим интерфейса применяются сразу, без отдельного
-                      сохранения.
+                      Язык и тема применяются сразу. Размер и поведение интерфейса
+                      автоматически подстраиваются под устройство.
                     </p>
                   </div>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-3">
+                <div className="grid gap-3 md:grid-cols-2">
                   <div className="rounded-[10px] border border-white/50 bg-background/75 p-3 shadow-sm dark:border-white/8 dark:bg-background/35">
                     <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                       <Languages className="size-3.5" />
@@ -296,45 +284,12 @@ export function SettingsPage() {
                       </SelectContent>
                     </Select>
                   </div>
-
-                  <div className="rounded-[10px] border border-white/50 bg-background/75 p-3 shadow-sm dark:border-white/8 dark:bg-background/35">
-                    <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-                      <Monitor className="size-3.5" />
-                      Режим
-                    </div>
-                    <div className="grid grid-cols-3 gap-2">
-                      {interfaceModes.map((mode) => {
-                        const isActive = form.interfaceMode === mode.value;
-
-                        return (
-                          <button
-                            key={mode.value}
-                            type="button"
-                            onClick={() => {
-                              void applyPreferenceChange((current) => ({
-                                ...current,
-                                interfaceMode: mode.value,
-                              }));
-                            }}
-                            className={`flex h-[72px] flex-col items-center justify-center gap-1 rounded-[10px] border text-[11px] font-medium transition-colors ${
-                              isActive
-                                ? "border-sky-300/55 bg-sky-500/10 text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50"
-                                : "border-border bg-background/85 text-muted-foreground hover:bg-accent/60 hover:text-foreground"
-                            }`}
-                          >
-                            <mode.icon className="size-4" />
-                            <span>{mode.label}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
                 </div>
 
                 <div className="mt-3 text-[11px] text-muted-foreground">
                   {applyingPreferences
-                    ? "Применяем изменения интерфейса..."
-                    : "Текущие системные параметры уже синхронизированы с прототипом."}
+                    ? "Применяем системные параметры..."
+                    : "Режим интерфейса определяется автоматически по ширине экрана."}
                 </div>
               </div>
 
@@ -356,7 +311,7 @@ export function SettingsPage() {
                   }`}
                 >
                   {isDirty
-                    ? "Поля профиля, уведомлений и графика можно сохранить одной кнопкой."
+                    ? "Поля профиля, уведомлений и рабочего графика сохраняются общей кнопкой."
                     : "Форма синхронизирована с последней сохраненной версией профиля."}
                 </div>
               </div>
@@ -367,8 +322,8 @@ export function SettingsPage() {
                   <div>
                     <p className="text-sm font-medium text-foreground">Сброс демо-данных</p>
                     <p className="text-xs text-muted-foreground">
-                      Возвращает пациентов, записи, медкарты и уведомления к начальному
-                      сценарию.
+                      Возвращает пациентов, записи, медкарты и уведомления к
+                      начальному сценарию.
                     </p>
                   </div>
                 </div>
@@ -388,7 +343,7 @@ export function SettingsPage() {
                       <AlertDialogTitle>Сбросить демо-данные?</AlertDialogTitle>
                       <AlertDialogDescription>
                         Все изменения в mock-слое будут удалены. Это удобно перед новой
-                        презентацией руководителю.
+                        презентацией.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -473,10 +428,7 @@ export function SettingsPage() {
                 <Input
                   value={form.specialty}
                   onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      specialty: event.target.value,
-                    }))
+                    setForm((current) => ({ ...current, specialty: event.target.value }))
                   }
                 />
               </div>
