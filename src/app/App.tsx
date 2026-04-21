@@ -68,7 +68,7 @@ function getLayoutMode(): LayoutMode {
 
 function RouteFallback() {
   return (
-    <main className="flex-1 overflow-auto">
+    <main className="flex-1 min-h-0 overflow-auto">
       <div className="mx-auto max-w-[1440px] p-6">
         <div className="space-y-2">
           <Skeleton className="h-8 w-56 rounded-xl" />
@@ -160,7 +160,7 @@ function AppShell() {
   return (
     <>
       <Router>
-        <div className="flex min-h-screen w-full bg-background">
+        <div className="flex h-screen w-full overflow-hidden bg-background">
           <Sidebar
             collapsed={sidebarCollapsed}
             layoutMode={layoutMode}
@@ -168,7 +168,7 @@ function AppShell() {
             onToggleSidebar={() => setSidebarCollapsed((current) => !current)}
             onCloseMobile={() => setMobileSidebarOpen(false)}
           />
-          <div className="flex min-w-0 flex-1 flex-col">
+          <div className="flex min-h-0 min-w-0 flex-1 flex-col">
             <Header
               layoutMode={layoutMode}
               onOpenMobileSidebar={() => setMobileSidebarOpen(true)}
