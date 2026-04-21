@@ -194,6 +194,13 @@ function AppShell() {
             </Suspense>
           </div>
         </div>
+        {liveNotification ? (
+          <NotificationToast
+            notification={liveNotification}
+            onRead={markNotificationRead}
+            onDismiss={dismissLiveNotification}
+          />
+        ) : null}
       </Router>
       <Toaster
         position="top-right"
@@ -203,13 +210,6 @@ function AppShell() {
           className: "rounded-2xl border border-border",
         }}
       />
-      {liveNotification ? (
-        <NotificationToast
-          notification={liveNotification}
-          onRead={markNotificationRead}
-          onDismiss={dismissLiveNotification}
-        />
-      ) : null}
     </>
   );
 }
