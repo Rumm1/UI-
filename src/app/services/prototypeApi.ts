@@ -16,9 +16,17 @@ import {
   UpdatePrescriptionInput,
   UpdatePatientInput,
 } from "../types/medical";
-import { Notification, NotificationSeverity } from "../types/notification";
+import {
+  Notification,
+  NotificationFilters,
+  NotificationSeverity,
+  NotificationsResponse,
+  WebSocketMessage,
+} from "../types/notification";
 
 const STORAGE_KEY = "medsystem-demo-prototype-v1";
+const NOTIFICATION_EVENT = "prototype-notification-message";
+const notificationMessageTarget = new EventTarget();
 
 function buildDefaultSnapshot() {
   return structuredClone(buildPrototypeSnapshot());
@@ -85,6 +93,58 @@ function delay<T>(value: T, timeout = 350) {
   return new Promise<T>((resolve) => {
     window.setTimeout(() => resolve(cloneValue(value)), timeout);
   });
+}
+
+function emitNotificationMessage(message: WebSocketMessage) {
+  notificationMessageTarget.dispatchEvent(
+    new CustomEvent<WebSocketMessage>(NOTIFICATION_EVENT, {
+      detail: message,
+    }),
+  );
+}
+
+function applyNotificationFilters(
+  notifications: Notification[],
+  filters: NotificationFilters = {},
+) {
+  let filtered = [...notifications];
+
+  if (filters.is_read !== undefined && filters.is_read !== null) {
+    filtered = filtered.filter((item) => item.is_read === filters.is_read);
+  }
+
+  if (filters.severity) {
+    filtered = filtered.filter((item) => item.severity === filters.severity);
+  }
+
+  if (filters.search) {
+    const needle = filters.search.trim().toLowerCase();
+
+    filtered = filtered.filter((item) =>
+      [item.title, item.body].join(" ").toLowerCase().includes(needle),
+    );
+  }
+
+  if (filters.from) {
+    const fromTime = new Date(filters.from).getTime();
+    filtered = filtered.filter(
+      (item) => new Date(item.created_at).getTime() >= fromTime,
+    );
+  }
+
+  if (filters.to) {
+    const toTime = new Date(filters.to).getTime();
+    filtered = filtered.filter(
+      (item) => new Date(item.created_at).getTime() <= toTime,
+    );
+  }
+
+  filtered.sort(
+    (left, right) =>
+      new Date(right.created_at).getTime() - new Date(left.created_at).getTime(),
+  );
+
+  return filtered;
 }
 
 function getPatient(patientId: string) {
@@ -348,6 +408,7 @@ export async function pushNotification(input: {
   body: string;
   actionUrl: string;
   severity?: NotificationSeverity;
+  displayDuration?: number;
 }) {
   const notification: Notification = {
     id: createId("notice"),
@@ -355,14 +416,68 @@ export async function pushNotification(input: {
     body: input.body,
     action_url: input.actionUrl,
     severity: input.severity ?? "NORMAL",
-    display_duration: 4,
+    display_duration: input.displayDuration ?? 4,
     is_read: false,
     created_at: new Date().toISOString(),
   };
 
   database.notifications = [notification, ...database.notifications];
   persistDatabase();
+  emitNotificationMessage({
+    type: "NEW_NOTIFICATION",
+    payload: notification,
+  });
   return delay(notification, 120);
+}
+
+export async function getNotifications(
+  filters: NotificationFilters = {},
+): Promise<NotificationsResponse> {
+  const filtered = applyNotificationFilters(database.notifications, filters);
+  const page = filters.page ?? 1;
+  const size = filters.size ?? 20;
+  const start = (page - 1) * size;
+  const end = start + size;
+
+  return delay(
+    {
+      items: filtered.slice(start, end),
+      pagination: {
+        page,
+        size,
+        total_items: filtered.length,
+        total_pages: Math.max(1, Math.ceil(filtered.length / size)),
+      },
+    },
+    220,
+  );
+}
+
+export async function getUnreadNotificationsCount() {
+  return delay(
+    database.notifications.filter((item) => !item.is_read).length,
+    100,
+  );
+}
+
+export function subscribeToNotificationMessages(
+  listener: (message: WebSocketMessage) => void,
+) {
+  const handleEvent = (event: Event) => {
+    listener((event as CustomEvent<WebSocketMessage>).detail);
+  };
+
+  notificationMessageTarget.addEventListener(
+    NOTIFICATION_EVENT,
+    handleEvent as EventListener,
+  );
+
+  return () => {
+    notificationMessageTarget.removeEventListener(
+      NOTIFICATION_EVENT,
+      handleEvent as EventListener,
+    );
+  };
 }
 
 export async function markNotificationAsRead(notificationId: string) {

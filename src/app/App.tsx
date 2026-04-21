@@ -3,6 +3,7 @@ import { BrowserRouter, HashRouter, Navigate, Route, Routes } from "react-router
 import { Toaster, toast } from "sonner";
 import { Sidebar } from "./components/Sidebar";
 import { Header } from "./components/Header";
+import { NotificationToast } from "./components/NotificationToast";
 import { AppDataProvider, useAppData } from "./contexts/AppDataContext";
 import { Skeleton } from "./components/ui/skeleton";
 
@@ -84,7 +85,12 @@ function RouteFallback() {
 }
 
 function AppShell() {
-  const { profile } = useAppData();
+  const {
+    dismissLiveNotification,
+    liveNotification,
+    markNotificationRead,
+    profile,
+  } = useAppData();
   const [layoutMode, setLayoutMode] = useState<LayoutMode>(getLayoutMode);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(getLayoutMode() !== "desktop");
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -197,6 +203,13 @@ function AppShell() {
           className: "rounded-2xl border border-border",
         }}
       />
+      {liveNotification ? (
+        <NotificationToast
+          notification={liveNotification}
+          onRead={markNotificationRead}
+          onDismiss={dismissLiveNotification}
+        />
+      ) : null}
     </>
   );
 }

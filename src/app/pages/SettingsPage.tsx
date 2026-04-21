@@ -129,7 +129,10 @@ export function SettingsPage() {
     setApplyingPreferences(true);
 
     try {
-      await saveProfile(nextProfile);
+      await saveProfile(nextProfile, {
+        silent: true,
+        emitNotification: false,
+      });
     } finally {
       setApplyingPreferences(false);
     }
@@ -214,9 +217,9 @@ export function SettingsPage() {
                   <Bell className="size-4" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">Лента уведомлений</p>
+                  <p className="text-sm font-medium text-foreground">Мои уведомления</p>
                   <p className="text-xs text-muted-foreground">
-                    Открыть системные уведомления и историю событий.
+                    Открыть личную ленту напоминаний и системных сигналов.
                   </p>
                 </div>
               </button>
