@@ -6,7 +6,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite",
-    "build:pages": "vite build"
+    "build:pages": "vite build",
+    "serve:dist": "node scripts/serve-dist.mjs"
   },
   "dependencies": {
     "@emotion/react": "11.14.0",
