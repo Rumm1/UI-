@@ -7,6 +7,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { ProfileAvatarPreset } from "../types/medical";
+import { Avatar, AvatarFallback, AvatarImage } from "../components/ui/avatar";
+import { cn } from "../components/ui/utils";
 
 export interface ProfileAvatarOption {
   value: ProfileAvatarPreset;
@@ -65,5 +67,49 @@ export function getProfileAvatarOption(
   return (
     profileAvatarOptions.find((option) => option.value === value) ??
     profileAvatarOptions[0]
+  );
+}
+
+interface ProfileAvatarProps {
+  avatarPreset: ProfileAvatarPreset;
+  avatarImage?: string | null;
+  fullName: string;
+  className?: string;
+  fallbackClassName?: string;
+  imageClassName?: string;
+  iconClassName?: string;
+}
+
+export function ProfileAvatar({
+  avatarPreset,
+  avatarImage,
+  fullName,
+  className,
+  fallbackClassName,
+  imageClassName,
+  iconClassName,
+}: ProfileAvatarProps) {
+  const avatarOption = getProfileAvatarOption(avatarPreset);
+  const AvatarIcon = avatarOption.icon;
+
+  return (
+    <Avatar className={cn("rounded-full", className)}>
+      {avatarImage ? (
+        <AvatarImage
+          src={avatarImage}
+          alt={fullName}
+          className={cn("object-cover", imageClassName)}
+        />
+      ) : null}
+      <AvatarFallback
+        className={cn(
+          "flex size-full items-center justify-center",
+          avatarOption.className,
+          fallbackClassName,
+        )}
+      >
+        <AvatarIcon className={cn("size-5", iconClassName)} />
+      </AvatarFallback>
+    </Avatar>
   );
 }

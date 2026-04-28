@@ -1,8 +1,10 @@
 import { FormEvent, useEffect, useState } from "react";
+import { toast } from "sonner";
 import {
   Bell,
   ChevronDown,
   Languages,
+  LogOut,
   Maximize2,
   Menu,
   Minimize2,
@@ -12,7 +14,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router";
 import { useAppData } from "../contexts/AppDataContext";
-import { getProfileAvatarOption } from "../lib/profileAvatar";
+import { ProfileAvatar } from "../lib/profileAvatar";
 import type { LanguagePreference } from "../types/medical";
 import { NotificationDropdown } from "./NotificationDropdown";
 import {
@@ -48,19 +50,16 @@ const languageOptions: Array<{
 const profileMenuItems = [
   {
     label: "Профиль",
-    description: "Личный кабинет врача и безопасность аккаунта",
     path: "/profile",
     icon: UserRound,
   },
   {
     label: "Уведомления",
-    description: "Лента событий, напоминаний и системных сигналов",
     path: "/notifications",
     icon: Bell,
   },
   {
     label: "Настройки",
-    description: "Системные параметры интерфейса и рабочий график",
     path: "/settings",
     icon: Settings2,
   },
@@ -75,8 +74,6 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
   const [savingLanguage, setSavingLanguage] = useState(false);
   const isMobile = layoutMode === "mobile";
   const isCompact = layoutMode !== "desktop";
-  const avatarOption = getProfileAvatarOption(profile.avatarPreset);
-  const ProfileIcon = avatarOption.icon;
 
   useEffect(() => {
     function syncFullscreenState() {
@@ -134,6 +131,13 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
     } catch {
       // Ignore fullscreen API failures silently.
     }
+  }
+
+  function handleLogout() {
+    toast.success("Вы вышли из аккаунта", {
+      description: "Демо-сессия завершена, интерфейс переведён на главную страницу.",
+    });
+    navigate("/", { replace: true });
   }
 
   return (
@@ -265,11 +269,13 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
               }`}
               aria-label="Меню профиля"
             >
-              <div
-                className={`flex size-10 shrink-0 items-center justify-center rounded-full ${avatarOption.className}`}
-              >
-                <ProfileIcon className="size-[18px]" />
-              </div>
+              <ProfileAvatar
+                avatarPreset={profile.avatarPreset}
+                avatarImage={profile.avatarImage}
+                fullName={profile.fullName}
+                className="size-10 shrink-0"
+                iconClassName="size-[18px]"
+              />
 
               {!isMobile ? (
                 <>
@@ -288,15 +294,17 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-[290px] rounded-[16px] border-border bg-card p-2 shadow-[0_24px_48px_-28px_rgba(15,23,42,0.38)]"
+            className="w-[220px] rounded-[14px] border-border bg-card p-1.5 shadow-[0_24px_48px_-28px_rgba(15,23,42,0.38)]"
           >
-            <DropdownMenuLabel className="px-3 py-3">
+            <DropdownMenuLabel className="px-2.5 py-2.5">
               <div className="flex items-center gap-3">
-                <div
-                  className={`flex size-12 items-center justify-center rounded-full ${avatarOption.className}`}
-                >
-                  <ProfileIcon className="size-5" />
-                </div>
+                <ProfileAvatar
+                  avatarPreset={profile.avatarPreset}
+                  avatarImage={profile.avatarImage}
+                  fullName={profile.fullName}
+                  className="size-12"
+                  iconClassName="size-5"
+                />
                 <div className="min-w-0">
                   <p className="truncate text-sm font-semibold text-foreground">
                     {profile.fullName}
@@ -314,25 +322,31 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
               return (
                 <DropdownMenuItem
                   key={item.path}
-                  className="cursor-pointer items-start gap-3 rounded-[12px] px-3 py-2.5"
+                  className="cursor-pointer gap-2.5 rounded-[12px] px-2.5 py-2"
                   onSelect={() => {
                     navigate(item.path);
                   }}
                 >
-                  <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-primary/10 text-primary">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-primary/10 text-primary">
                     <Icon className="size-4" />
                   </div>
-                  <div className="min-w-0">
-                    <p className="text-[13px] font-medium text-foreground">
-                      {item.label}
-                    </p>
-                    <p className="text-[11px] leading-4 text-muted-foreground">
-                      {item.description}
-                    </p>
-                  </div>
+                  <span className="text-[13px] font-medium text-foreground">
+                    {item.label}
+                  </span>
                 </DropdownMenuItem>
               );
             })}
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              variant="destructive"
+              className="cursor-pointer gap-2.5 rounded-[12px] px-2.5 py-2"
+              onSelect={handleLogout}
+            >
+              <div className="flex size-8 shrink-0 items-center justify-center rounded-[10px] bg-destructive/10 text-destructive">
+                <LogOut className="size-4" />
+              </div>
+              <span className="text-[13px] font-medium">Выйти из аккаунта</span>
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

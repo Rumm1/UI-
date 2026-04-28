@@ -131,6 +131,7 @@ export interface ProfileSettings {
   fullName: string;
   initials: string;
   avatarPreset: ProfileAvatarPreset;
+  avatarImage: string | null;
   role: string;
   specialty: string;
   email: string;

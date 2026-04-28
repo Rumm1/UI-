@@ -671,6 +671,7 @@ const profile: ProfileSettings = {
   fullName: "Иван Иванов",
   initials: "ИИ",
   avatarPreset: "stethoscope",
+  avatarImage: null,
   role: "Главный врач",
   specialty: "Терапевт",
   email: "ivanov@medsystem.demo",

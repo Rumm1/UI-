@@ -62,6 +62,7 @@ const emptySnapshot: PrototypeSnapshot = {
     fullName: "",
     initials: "",
     avatarPreset: "user",
+    avatarImage: null,
     role: "",
     specialty: "",
     email: "",
