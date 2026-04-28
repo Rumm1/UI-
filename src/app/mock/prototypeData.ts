@@ -670,6 +670,7 @@ const profile: ProfileSettings = {
   lastName: "Иванов",
   fullName: "Иван Иванов",
   initials: "ИИ",
+  avatarPreset: "stethoscope",
   role: "Главный врач",
   specialty: "Терапевт",
   email: "ivanov@medsystem.demo",
@@ -678,6 +679,7 @@ const profile: ProfileSettings = {
   licenseNumber: "ЛО-77-01-012345",
   bio:
     "Курирует амбулаторный блок, отвечает за качество приема и внедрение цифровых сервисов в клинике.",
+  passwordUpdatedAt: at(-14, 9, 15),
   theme: "light",
   language: "ru",
   interfaceMode: "desktop",

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Bell,
   Globe,
@@ -7,9 +7,7 @@ import {
   RotateCcw,
   Save,
   Settings2,
-  UserRound,
 } from "lucide-react";
-import { useNavigate } from "react-router";
 import { useAppData } from "../contexts/AppDataContext";
 import {
   LanguagePreference,
@@ -31,8 +29,6 @@ import {
 } from "../components/ui/alert-dialog";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { Label } from "../components/ui/label";
-import { Textarea } from "../components/ui/textarea";
 import { Switch } from "../components/ui/switch";
 import {
   Select,
@@ -60,12 +56,12 @@ const notificationOptions: Array<{
   {
     key: "sms",
     label: "SMS-уведомления",
-    hint: "Использовать смс только для срочных событий.",
+    hint: "Использовать СМС только для срочных событий.",
   },
   {
     key: "criticalOnly",
     label: "Только критичные",
-    hint: "Оставлять только high/critical события.",
+    hint: "Оставлять только важные и критические сигналы.",
   },
   {
     key: "dailyDigest",
@@ -75,7 +71,6 @@ const notificationOptions: Array<{
 ];
 
 export function SettingsPage() {
-  const navigate = useNavigate();
   const {
     bootstrapError,
     isBootstrapping,
@@ -93,13 +88,11 @@ export function SettingsPage() {
     setForm(profile);
   }, [profile]);
 
-  const isDirty = useMemo(
-    () => JSON.stringify(form) !== JSON.stringify(profile),
-    [form, profile],
-  );
+  const isDirty = JSON.stringify(form) !== JSON.stringify(profile);
 
   async function handleSave() {
     setSaving(true);
+
     try {
       await saveProfile(form);
     } finally {
@@ -109,6 +102,7 @@ export function SettingsPage() {
 
   async function handleResetDemo() {
     setResetting(true);
+
     try {
       await resetDemoData();
     } finally {
@@ -176,11 +170,9 @@ export function SettingsPage() {
             <Skeleton className="h-8 w-52 rounded-xl" />
             <Skeleton className="h-4 w-72 rounded-xl" />
           </div>
-          <div className="mt-6 rounded-3xl border border-border bg-card p-6">
-            <div className="grid gap-6 lg:grid-cols-[0.9fr_1.3fr]">
-              <Skeleton className="h-[640px] rounded-2xl" />
-              <Skeleton className="h-[820px] rounded-2xl" />
-            </div>
+          <div className="mt-6 grid gap-6 lg:grid-cols-[0.95fr_1.25fr]">
+            <Skeleton className="h-[520px] rounded-3xl" />
+            <Skeleton className="h-[760px] rounded-3xl" />
           </div>
         </div>
       </main>
@@ -191,315 +183,199 @@ export function SettingsPage() {
     <main className="flex-1 overflow-auto">
       <div className="mx-auto max-w-[1440px] p-6">
         <div className="mb-6">
-          <h1 className="mb-1 text-2xl font-semibold text-foreground">Настройки</h1>
+          <h1 className="mb-1 text-2xl font-semibold text-foreground">
+            Настройки
+          </h1>
           <p className="text-sm text-muted-foreground">
-            Профиль врача, уведомления, рабочий график и системные параметры
-            интерфейса.
+            Системные параметры интерфейса, предпочтения уведомлений и рабочий
+            график.
           </p>
         </div>
 
-        <section className="overflow-hidden rounded-3xl border border-border bg-card">
-          <div className="grid lg:grid-cols-[0.9fr_1.3fr]">
-            <aside className="border-b border-border p-6 lg:border-b-0 lg:border-r">
-            <div className="mb-6 flex items-center gap-4 border-b border-border pb-6">
-              <div className="flex size-20 items-center justify-center rounded-full bg-primary/10 text-2xl font-semibold text-primary">
-                {form.initials}
-              </div>
-              <div>
-                <h2 className="text-xl font-semibold text-foreground">{form.fullName}</h2>
-                <p className="text-sm text-muted-foreground">{form.specialty}</p>
-              </div>
-            </div>
-
-            <div className="space-y-4">
-              <button
-                onClick={() => navigate("/notifications")}
-                className="flex w-full items-center gap-3 rounded-[10px] border border-border p-4 text-left transition-colors hover:bg-accent/40"
-              >
-                <div className="flex size-10 items-center justify-center rounded-[10px] bg-primary/10 text-primary">
-                  <Bell className="size-4" />
+        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.25fr]">
+          <section className="space-y-4">
+            <div className="rounded-3xl border border-border bg-card p-5">
+              <div className="mb-5 flex items-start gap-3">
+                <div className="flex size-11 items-center justify-center rounded-[14px] bg-primary/10 text-primary">
+                  <Globe className="size-5" />
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-foreground">Мои уведомления</p>
-                  <p className="text-xs text-muted-foreground">
-                    Открыть личную ленту напоминаний и системных сигналов.
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Интерфейс
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Язык и тема применяются сразу после выбора.
                   </p>
                 </div>
-              </button>
+              </div>
 
-              <div className="overflow-hidden rounded-[10px] border border-primary/15 bg-linear-to-br from-primary/[0.05] via-card to-primary/[0.12] p-4 dark:border-primary/15 dark:from-primary/[0.06] dark:to-primary/[0.12]">
-                <div className="mb-4 flex items-start gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-[10px] bg-background/90 text-primary shadow-sm ring-1 ring-primary/15 dark:bg-background/60 dark:ring-primary/20">
-                    <Globe className="size-4" />
+              <div className="grid gap-3 md:grid-cols-2">
+                <div className="rounded-[14px] border border-border bg-background/70 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                    <Languages className="size-3.5" />
+                    Язык
                   </div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Локализация</p>
-                    <p className="text-xs text-muted-foreground">
-                      Язык и тема применяются сразу. Размер и поведение интерфейса
-                      автоматически подстраиваются под устройство.
-                    </p>
-                  </div>
+                  <Select
+                    value={form.language}
+                    onValueChange={(value: LanguagePreference) => {
+                      void applyPreferenceChange((current) => ({
+                        ...current,
+                        language: value,
+                      }));
+                    }}
+                  >
+                    <SelectTrigger className="rounded-[12px] border-border bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ru">Русский</SelectItem>
+                      <SelectItem value="en">English</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
 
-                <div className="grid gap-3 md:grid-cols-2">
-                  <div className="rounded-[10px] border border-border/70 bg-background/75 p-3 shadow-sm dark:border-border dark:bg-background/40">
-                    <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-                      <Languages className="size-3.5" />
-                      Язык
-                    </div>
-                    <Select
-                      value={form.language}
-                      onValueChange={(value: LanguagePreference) => {
-                        void applyPreferenceChange((current) => ({
-                          ...current,
-                          language: value,
-                        }));
+                <div className="rounded-[14px] border border-border bg-background/70 p-4">
+                  <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
+                    <Palette className="size-3.5" />
+                    Тема
+                  </div>
+                  <Select
+                    value={form.theme}
+                    onValueChange={(value: ThemePreference) => {
+                      void applyPreferenceChange((current) => ({
+                        ...current,
+                        theme: value,
+                      }));
+                    }}
+                  >
+                    <SelectTrigger className="rounded-[12px] border-border bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="light">Светлая</SelectItem>
+                      <SelectItem value="dark">Темная</SelectItem>
+                      <SelectItem value="system">Системная</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <p className="mt-4 text-xs text-muted-foreground">
+                {applyingPreferences
+                  ? "Применяем выбранные параметры интерфейса..."
+                  : "Режим интерфейса по устройству определяется автоматически по ширине экрана."}
+              </p>
+            </div>
+
+            <div className="rounded-3xl border border-border bg-card p-5">
+              <div className="mb-4 flex items-start gap-3">
+                <div className="flex size-11 items-center justify-center rounded-[14px] bg-primary/10 text-primary">
+                  <Settings2 className="size-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Состояние формы
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Контроль синхронизации сохранённых настроек.
+                  </p>
+                </div>
+              </div>
+
+              <div
+                className={`rounded-[14px] px-4 py-3 text-sm ${
+                  isDirty
+                    ? "border border-amber-200/70 bg-amber-50 text-amber-700 dark:border-amber-900/45 dark:bg-amber-950/25 dark:text-amber-200"
+                    : "border border-emerald-200/70 bg-emerald-50 text-emerald-700 dark:border-emerald-900/45 dark:bg-emerald-950/25 dark:text-emerald-200"
+                }`}
+              >
+                {isDirty
+                  ? "Есть несохранённые изменения в настройках уведомлений или графика."
+                  : "Настройки синхронизированы с последней сохранённой версией."}
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-border bg-card p-5">
+              <div className="mb-4 flex items-start gap-3">
+                <div className="flex size-11 items-center justify-center rounded-[14px] bg-primary/10 text-primary">
+                  <RotateCcw className="size-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Сброс демо-данных
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Возвращает прототип к исходному демонстрационному сценарию.
+                  </p>
+                </div>
+              </div>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    variant="outline"
+                    className="w-full rounded-[12px]"
+                    disabled={resetting}
+                  >
+                    <RotateCcw className="size-4" />
+                    {resetting ? "Сбрасываем..." : "Сбросить демо-режим"}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent className="rounded-3xl">
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Сбросить демо-данные?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Все изменения в mock-слое будут удалены. Это удобно перед
+                      новой демонстрацией.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel className="rounded-[12px]">
+                      Отмена
+                    </AlertDialogCancel>
+                    <AlertDialogAction
+                      className="rounded-[12px]"
+                      onClick={() => {
+                        void handleResetDemo();
                       }}
                     >
-                      <SelectTrigger className="rounded-[10px] border-border bg-background/90">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="ru">Русский</SelectItem>
-                        <SelectItem value="en">Английский</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="rounded-[10px] border border-border/70 bg-background/75 p-3 shadow-sm dark:border-border dark:bg-background/40">
-                    <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
-                      <Palette className="size-3.5" />
-                      Тема
-                    </div>
-                    <Select
-                      value={form.theme}
-                      onValueChange={(value: ThemePreference) => {
-                        void applyPreferenceChange((current) => ({
-                          ...current,
-                          theme: value,
-                        }));
-                      }}
-                    >
-                      <SelectTrigger className="rounded-[10px] border-border bg-background/90">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Светлая</SelectItem>
-                        <SelectItem value="dark">Темная</SelectItem>
-                        <SelectItem value="system">Системная</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="mt-3 text-[11px] text-muted-foreground">
-                  {applyingPreferences
-                    ? "Применяем системные параметры..."
-                    : "Режим интерфейса определяется автоматически по ширине экрана."}
-                </div>
-              </div>
-
-              <div className="rounded-[10px] border border-border p-4">
-                <div className="mb-3 flex items-center gap-3">
-                  <Settings2 className="size-5 text-primary" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Состояние формы</p>
-                    <p className="text-xs text-muted-foreground">
-                      {isDirty
-                        ? "Есть несохраненные изменения"
-                        : "Несохраненных изменений нет"}
-                    </p>
-                  </div>
-                </div>
-                <div
-                  className={`rounded-[10px] px-3 py-2 text-sm ${
-                    isDirty ? "bg-amber-50 text-amber-700" : "bg-emerald-50 text-emerald-700"
-                  }`}
-                >
-                  {isDirty
-                    ? "Поля профиля, уведомлений и рабочего графика сохраняются общей кнопкой."
-                    : "Форма синхронизирована с последней сохраненной версией профиля."}
-                </div>
-              </div>
-
-              <div className="rounded-[10px] border border-border p-4">
-                <div className="mb-3 flex items-center gap-3">
-                  <RotateCcw className="size-5 text-primary" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">Сброс демо-данных</p>
-                    <p className="text-xs text-muted-foreground">
-                      Возвращает пациентов, записи, медкарты и уведомления к
-                      начальному сценарию.
-                    </p>
-                  </div>
-                </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      className="w-full rounded-[10px]"
-                      disabled={resetting}
-                    >
-                      <RotateCcw className="mr-2 size-4" />
-                      {resetting ? "Сбрасываем..." : "Сбросить демо-режим"}
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent className="rounded-3xl">
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Сбросить демо-данные?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        Все изменения в mock-слое будут удалены. Это удобно перед новой
-                        презентацией.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel className="rounded-[10px]">
-                        Отмена
-                      </AlertDialogCancel>
-                      <AlertDialogAction
-                        className="rounded-[10px]"
-                        onClick={() => {
-                          void handleResetDemo();
-                        }}
-                      >
-                        Сбросить данные
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
-              </div>
+                      Сбросить данные
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </div>
-          </aside>
+          </section>
 
-            <section className="p-6">
-            <div className="mb-6 flex items-center gap-3">
-              <UserRound className="size-5 text-primary" />
-              <div>
-                <h2 className="text-lg font-semibold text-foreground">Профиль врача</h2>
-                <p className="text-sm text-muted-foreground">
-                  Основные поля профиля и рабочие параметры клиники.
-                </p>
+          <section className="space-y-6 rounded-3xl border border-border bg-card p-5">
+            <div>
+              <div className="mb-5 flex items-start gap-3">
+                <div className="flex size-11 items-center justify-center rounded-[14px] bg-primary/10 text-primary">
+                  <Bell className="size-5" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-semibold text-foreground">
+                    Предпочтения уведомлений
+                  </h2>
+                  <p className="text-sm text-muted-foreground">
+                    Определяют, как система будет уведомлять о событиях и рисках.
+                  </p>
+                </div>
               </div>
-            </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <Label>Имя</Label>
-                <Input
-                  value={form.firstName}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      firstName: event.target.value,
-                      fullName: `${event.target.value} ${current.lastName}`.trim(),
-                      initials: `${event.target.value[0] ?? ""}${current.lastName[0] ?? ""}`.toUpperCase(),
-                    }))
-                  }
-                />
-              </div>
-              <div>
-                <Label>Фамилия</Label>
-                <Input
-                  value={form.lastName}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      lastName: event.target.value,
-                      fullName: `${current.firstName} ${event.target.value}`.trim(),
-                      initials: `${current.firstName[0] ?? ""}${event.target.value[0] ?? ""}`.toUpperCase(),
-                    }))
-                  }
-                />
-              </div>
-              <div>
-                <Label>Email</Label>
-                <Input
-                  value={form.email}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, email: event.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label>Телефон</Label>
-                <Input
-                  value={form.phone}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, phone: event.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label>Специальность</Label>
-                <Input
-                  value={form.specialty}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, specialty: event.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label>Клиника</Label>
-                <Input
-                  value={form.clinic}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, clinic: event.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label>Часовой пояс</Label>
-                <Input
-                  value={form.timezone}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, timezone: event.target.value }))
-                  }
-                />
-              </div>
-              <div>
-                <Label>Роль</Label>
-                <Input
-                  value={form.role}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, role: event.target.value }))
-                  }
-                />
-              </div>
-              <div className="md:col-span-2">
-                <Label>Лицензия</Label>
-                <Input
-                  value={form.licenseNumber}
-                  onChange={(event) =>
-                    setForm((current) => ({
-                      ...current,
-                      licenseNumber: event.target.value,
-                    }))
-                  }
-                />
-              </div>
-              <div className="md:col-span-2">
-                <Label>О себе</Label>
-                <Textarea
-                  rows={4}
-                  value={form.bio}
-                  onChange={(event) =>
-                    setForm((current) => ({ ...current, bio: event.target.value }))
-                  }
-                />
-              </div>
-            </div>
-
-            <div className="my-6 border-t border-border pt-6">
-              <h3 className="mb-4 text-base font-semibold text-foreground">Уведомления</h3>
               <div className="space-y-3">
                 {notificationOptions.map((item) => (
                   <div
                     key={item.key}
-                    className="flex items-center justify-between rounded-[10px] border border-border p-4"
+                    className="flex items-center justify-between gap-4 rounded-[14px] border border-border bg-background/60 p-4"
                   >
                     <div>
-                      <p className="text-sm font-medium text-foreground">{item.label}</p>
-                      <p className="text-xs text-muted-foreground">{item.hint}</p>
+                      <p className="text-sm font-medium text-foreground">
+                        {item.label}
+                      </p>
+                      <p className="text-xs leading-5 text-muted-foreground">
+                        {item.hint}
+                      </p>
                     </div>
                     <Switch
                       checked={form.notifications[item.key]}
@@ -519,120 +395,89 @@ export function SettingsPage() {
             </div>
 
             <div className="border-t border-border pt-6">
-              <h3 className="mb-4 text-base font-semibold text-foreground">
+              <h2 className="mb-4 text-lg font-semibold text-foreground">
                 Рабочий график
-              </h3>
-              <div className="grid gap-3 md:grid-cols-3">
-                {form.workingHours.map((day) => {
-                  const isSunday = day.dayKey === "sun";
-
-                  return (
-                    <div
-                      key={day.id}
-                      className={`rounded-[10px] border border-border p-3 ${
-                        isSunday ? "md:col-span-3" : "md:aspect-square"
-                      }`}
-                    >
-                      <div
-                        className={`grid h-full gap-3 ${
-                          isSunday
-                            ? "md:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)]"
-                            : ""
-                        }`}
-                      >
-                        <div className="flex flex-col rounded-[10px] bg-muted/35 p-3">
-                          <div className="flex items-start justify-between gap-3">
-                            <div>
-                              <p className="text-sm font-medium text-foreground">
-                                {day.label}
-                              </p>
-                              <p className="text-xs text-muted-foreground">
-                                {day.enabled ? "Рабочий день" : "Выходной"}
-                              </p>
-                            </div>
-                            <Switch
-                              checked={day.enabled}
-                              onCheckedChange={(checked) =>
-                                updateWorkingDay(day.id, (current) => ({
-                                  ...current,
-                                  enabled: checked,
-                                }))
-                              }
-                            />
-                          </div>
-                          {!isSunday ? (
-                            <div className="mt-auto pt-4 text-[11px] text-muted-foreground">
-                              График карточки сохранится после общей кнопки
-                              «Сохранить настройки».
-                            </div>
-                          ) : null}
-                        </div>
-
-                        <div
-                          className={`grid items-center gap-2 rounded-[10px] bg-muted/40 p-2 ${
-                            isSunday
-                              ? "grid-cols-[minmax(0,1fr)_40px_minmax(0,1fr)]"
-                              : "mt-auto grid-cols-[1fr_40px_1fr]"
-                          }`}
-                        >
-                          <Input
-                            type="time"
-                            value={day.start}
-                            disabled={!day.enabled}
-                            onChange={(event) =>
-                              updateWorkingDay(day.id, (current) => ({
-                                ...current,
-                                start: event.target.value,
-                              }))
-                            }
-                            className="w-full"
-                          />
-                          <span className="flex h-10 items-center justify-center rounded-[10px] border border-border bg-background text-muted-foreground">
-                            —
-                          </span>
-                          <Input
-                            type="time"
-                            value={day.end}
-                            disabled={!day.enabled}
-                            onChange={(event) =>
-                              updateWorkingDay(day.id, (current) => ({
-                                ...current,
-                                end: event.target.value,
-                              }))
-                            }
-                            className="w-full"
-                          />
-                        </div>
+              </h2>
+              <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+                {form.workingHours.map((day) => (
+                  <div
+                    key={day.id}
+                    className="rounded-[14px] border border-border bg-background/60 p-4"
+                  >
+                    <div className="mb-4 flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-sm font-medium text-foreground">
+                          {day.label}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {day.enabled ? "Рабочий день" : "Выходной"}
+                        </p>
                       </div>
+                      <Switch
+                        checked={day.enabled}
+                        onCheckedChange={(checked) =>
+                          updateWorkingDay(day.id, (current) => ({
+                            ...current,
+                            enabled: checked,
+                          }))
+                        }
+                      />
                     </div>
-                  );
-                })}
+
+                    <div className="grid grid-cols-[1fr_34px_1fr] items-center gap-2">
+                      <Input
+                        type="time"
+                        value={day.start}
+                        disabled={!day.enabled}
+                        onChange={(event) =>
+                          updateWorkingDay(day.id, (current) => ({
+                            ...current,
+                            start: event.target.value,
+                          }))
+                        }
+                      />
+                      <span className="flex h-10 items-center justify-center rounded-[12px] border border-border bg-background text-muted-foreground">
+                        -
+                      </span>
+                      <Input
+                        type="time"
+                        value={day.end}
+                        disabled={!day.enabled}
+                        onChange={(event) =>
+                          updateWorkingDay(day.id, (current) => ({
+                            ...current,
+                            end: event.target.value,
+                          }))
+                        }
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
 
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="flex justify-end gap-3 border-t border-border pt-6">
               <Button
                 variant="outline"
-                className="rounded-[10px]"
+                className="rounded-[12px]"
                 disabled={!isDirty}
                 onClick={() => setForm(profile)}
               >
                 Сбросить
               </Button>
               <Button
-                className="rounded-[10px]"
+                className="rounded-[12px]"
                 disabled={!isDirty || saving}
                 onClick={() => {
                   void handleSave();
                 }}
               >
-                <Save className="mr-2 size-4" />
+                <Save className="size-4" />
                 {saving ? "Сохраняем..." : "Сохранить настройки"}
               </Button>
             </div>
-            </section>
-          </div>
-        </section>
+          </section>
+        </div>
       </div>
     </main>
   );

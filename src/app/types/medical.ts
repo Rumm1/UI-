@@ -14,6 +14,12 @@ export type DashboardPeriod = "day" | "week" | "month";
 export type ThemePreference = "light" | "dark" | "system";
 export type LanguagePreference = "ru" | "en";
 export type InterfaceMode = "desktop" | "tablet" | "mobile";
+export type ProfileAvatarPreset =
+  | "user"
+  | "stethoscope"
+  | "activity"
+  | "heart"
+  | "shield";
 
 export interface PatientMetrics {
   bloodPressure: string;
@@ -124,6 +130,7 @@ export interface ProfileSettings {
   lastName: string;
   fullName: string;
   initials: string;
+  avatarPreset: ProfileAvatarPreset;
   role: string;
   specialty: string;
   email: string;
@@ -131,6 +138,7 @@ export interface ProfileSettings {
   clinic: string;
   licenseNumber: string;
   bio: string;
+  passwordUpdatedAt: string | null;
   theme: ThemePreference;
   language: LanguagePreference;
   interfaceMode: InterfaceMode;
@@ -144,6 +152,12 @@ export interface TaskItem {
   title: string;
   priority: "low" | "medium" | "high";
   completed: boolean;
+  dueAt: string;
+}
+
+export interface NewTaskInput {
+  title: string;
+  priority: TaskItem["priority"];
   dueAt: string;
 }
 

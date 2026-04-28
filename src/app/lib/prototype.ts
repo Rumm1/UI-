@@ -128,7 +128,7 @@ const statusToneMap: Record<string, string> = {
   inactive:
     "border-slate-200 bg-slate-100 text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/35 dark:text-slate-200",
   confirmed:
-    "border-cyan-200 bg-cyan-50 text-cyan-700 dark:border-cyan-900/55 dark:bg-cyan-950/30 dark:text-cyan-200",
+    "border-sky-300/80 bg-sky-100/90 text-sky-900 dark:border-sky-800/70 dark:bg-sky-950/40 dark:text-sky-200",
   pending:
     "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/55 dark:bg-amber-950/30 dark:text-amber-200",
   cancelled:

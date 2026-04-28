@@ -1,19 +1,24 @@
 import { FormEvent, useEffect, useState } from "react";
 import {
+  Bell,
   ChevronDown,
   Languages,
   Maximize2,
   Menu,
   Minimize2,
   Search,
+  Settings2,
+  UserRound,
 } from "lucide-react";
-import { Link, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { useAppData } from "../contexts/AppDataContext";
+import { getProfileAvatarOption } from "../lib/profileAvatar";
 import type { LanguagePreference } from "../types/medical";
 import { NotificationDropdown } from "./NotificationDropdown";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
@@ -29,17 +34,35 @@ interface HeaderProps {
 const languageOptions: Array<{
   value: LanguagePreference;
   label: string;
-  description: string;
 }> = [
   {
     value: "ru",
     label: "Русский",
-    description: "Основной интерфейс на русском языке",
   },
   {
     value: "en",
     label: "English",
-    description: "English labels for the interface",
+  },
+];
+
+const profileMenuItems = [
+  {
+    label: "Профиль",
+    description: "Личный кабинет врача и безопасность аккаунта",
+    path: "/profile",
+    icon: UserRound,
+  },
+  {
+    label: "Уведомления",
+    description: "Лента событий, напоминаний и системных сигналов",
+    path: "/notifications",
+    icon: Bell,
+  },
+  {
+    label: "Настройки",
+    description: "Системные параметры интерфейса и рабочий график",
+    path: "/settings",
+    icon: Settings2,
   },
 ];
 
@@ -52,7 +75,8 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
   const [savingLanguage, setSavingLanguage] = useState(false);
   const isMobile = layoutMode === "mobile";
   const isCompact = layoutMode !== "desktop";
-  const profileInitials = profile.initials || "ИИ";
+  const avatarOption = getProfileAvatarOption(profile.avatarPreset);
+  const ProfileIcon = avatarOption.icon;
 
   useEffect(() => {
     function syncFullscreenState() {
@@ -156,8 +180,6 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
       <div
         className={`flex shrink-0 items-center ${isCompact ? "gap-2" : "gap-3"}`}
       >
-        <NotificationDropdown />
-
         <DropdownMenu open={isLanguageMenuOpen} onOpenChange={setIsLanguageMenuOpen}>
           <DropdownMenuTrigger asChild>
             <button
@@ -178,7 +200,7 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-[240px] rounded-[14px] border-border bg-card p-2 shadow-[0_24px_48px_-28px_rgba(15,23,42,0.38)]"
+            className="w-[220px] rounded-[14px] border-border bg-card p-2 shadow-[0_24px_48px_-28px_rgba(15,23,42,0.38)]"
           >
             <DropdownMenuLabel className="px-2 pb-1 text-xs uppercase tracking-[0.12em] text-muted-foreground">
               Язык интерфейса
@@ -195,16 +217,11 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
                   key={option.value}
                   value={option.value}
                   disabled={savingLanguage}
-                  className="items-start rounded-[10px] py-2 pl-8 pr-3"
+                  className="rounded-[10px] py-2 pl-8 pr-3"
                 >
-                  <div className="flex flex-col gap-0.5">
-                    <span className="text-[13px] font-medium text-foreground">
-                      {option.label}
-                    </span>
-                    <span className="text-[11px] leading-4 text-muted-foreground">
-                      {option.description}
-                    </span>
-                  </div>
+                  <span className="text-[13px] font-medium text-foreground">
+                    {option.label}
+                  </span>
                 </DropdownMenuRadioItem>
               ))}
             </DropdownMenuRadioGroup>
@@ -237,27 +254,87 @@ export function Header({ layoutMode, onOpenMobileSidebar }: HeaderProps) {
           </button>
         ) : null}
 
-        <Link
-          to="/settings"
-          className={`flex items-center gap-3 rounded-[14px] bg-muted/55 transition-colors hover:bg-accent/65 ${
-            isMobile ? "px-2.5 py-2" : "px-3 py-2.5"
-          }`}
-        >
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-sm font-semibold text-primary">
-            {profileInitials}
-          </div>
+        <NotificationDropdown />
 
-          {!isMobile ? (
-            <div className="min-w-0 max-w-[160px]">
-              <p className="truncate text-[13px] font-semibold text-foreground">
-                {profile.fullName}
-              </p>
-              <p className="truncate text-[11px] text-muted-foreground">
-                {profile.specialty}
-              </p>
-            </div>
-          ) : null}
-        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              type="button"
+              className={`flex items-center gap-3 rounded-[14px] bg-muted/55 transition-colors hover:bg-accent/65 ${
+                isMobile ? "px-2.5 py-2" : "px-3 py-2.5"
+              }`}
+              aria-label="Меню профиля"
+            >
+              <div
+                className={`flex size-10 shrink-0 items-center justify-center rounded-full ${avatarOption.className}`}
+              >
+                <ProfileIcon className="size-[18px]" />
+              </div>
+
+              {!isMobile ? (
+                <>
+                  <div className="min-w-0 max-w-[160px] text-left">
+                    <p className="truncate text-[13px] font-semibold text-foreground">
+                      {profile.fullName}
+                    </p>
+                    <p className="truncate text-[11px] text-muted-foreground">
+                      {profile.specialty}
+                    </p>
+                  </div>
+                  <ChevronDown className="size-4 shrink-0 text-muted-foreground" />
+                </>
+              ) : null}
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="end"
+            className="w-[290px] rounded-[16px] border-border bg-card p-2 shadow-[0_24px_48px_-28px_rgba(15,23,42,0.38)]"
+          >
+            <DropdownMenuLabel className="px-3 py-3">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`flex size-12 items-center justify-center rounded-full ${avatarOption.className}`}
+                >
+                  <ProfileIcon className="size-5" />
+                </div>
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-semibold text-foreground">
+                    {profile.fullName}
+                  </p>
+                  <p className="truncate text-xs font-normal text-muted-foreground">
+                    {profile.specialty}
+                  </p>
+                </div>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {profileMenuItems.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <DropdownMenuItem
+                  key={item.path}
+                  className="cursor-pointer items-start gap-3 rounded-[12px] px-3 py-2.5"
+                  onSelect={() => {
+                    navigate(item.path);
+                  }}
+                >
+                  <div className="mt-0.5 flex size-10 shrink-0 items-center justify-center rounded-[12px] bg-primary/10 text-primary">
+                    <Icon className="size-4" />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-[13px] font-medium text-foreground">
+                      {item.label}
+                    </p>
+                    <p className="text-[11px] leading-4 text-muted-foreground">
+                      {item.description}
+                    </p>
+                  </div>
+                </DropdownMenuItem>
+              );
+            })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </header>
   );

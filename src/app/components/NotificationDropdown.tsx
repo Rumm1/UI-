@@ -110,10 +110,14 @@ export function NotificationDropdown() {
       <button
         type="button"
         onClick={() => setOpen((current) => !current)}
-        className="relative rounded-[10px] p-2 transition-colors hover:bg-accent"
+        className={`relative flex size-10 items-center justify-center rounded-[12px] border transition-colors ${
+          open
+            ? "border-primary/30 bg-primary/[0.08] text-primary"
+            : "border-border bg-background text-foreground hover:bg-accent"
+        }`}
         aria-label="Уведомления"
       >
-        <Bell className="size-5 text-foreground" />
+        <Bell className="size-5" />
         {unreadCount > 0 ? (
           <span className="absolute right-1 top-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold text-white dark:bg-rose-900/90 dark:text-rose-100">
             {unreadCount > 9 ? "9+" : unreadCount}

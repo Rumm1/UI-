@@ -44,6 +44,11 @@ const SettingsPage = lazy(() =>
     default: module.SettingsPage,
   })),
 );
+const ProfilePage = lazy(() =>
+  import("./pages/ProfilePage").then((module) => ({
+    default: module.ProfilePage,
+  })),
+);
 const NotificationsPage = lazy(() =>
   import("./pages/NotificationsPage").then((module) => ({
     default: module.NotificationsPage,
@@ -187,6 +192,7 @@ function AppShell() {
                 <Route path="/records" element={<MedicalRecordsPage />} />
                 <Route path="/records/:recordId" element={<MedicalRecordDetailPage />} />
                 <Route path="/prescriptions" element={<PrescriptionsPage />} />
+                <Route path="/profile" element={<ProfilePage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/notifications" element={<NotificationsPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />

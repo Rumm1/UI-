@@ -8,6 +8,7 @@ import {
   NewMedicalRecordInput,
   NewPatientInput,
   NewPrescriptionInput,
+  NewTaskInput,
   Patient,
   Prescription,
   ProfileSettings,
@@ -383,6 +384,21 @@ export async function updateProfileSettings(profile: ProfileSettings) {
   return delay(database.profile, 380);
 }
 
+export async function createTask(input: NewTaskInput) {
+  const task: TaskItem = {
+    id: createId("task"),
+    title: input.title.trim(),
+    priority: input.priority,
+    completed: false,
+    dueAt: input.dueAt,
+  };
+
+  database.tasks = [task, ...database.tasks];
+  persistDatabase();
+
+  return delay(task, 220);
+}
+
 export async function toggleTask(taskId: string) {
   const task = database.tasks.find((item) => item.id === taskId);
 
@@ -401,6 +417,19 @@ export async function toggleTask(taskId: string) {
   persistDatabase();
 
   return delay(nextTask, 180);
+}
+
+export async function deleteTask(taskId: string) {
+  const task = database.tasks.find((item) => item.id === taskId);
+
+  if (!task) {
+    throw new Error("Task not found");
+  }
+
+  database.tasks = database.tasks.filter((item) => item.id !== taskId);
+  persistDatabase();
+
+  return delay(task, 160);
 }
 
 export async function pushNotification(input: {

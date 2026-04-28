@@ -3,82 +3,82 @@
 :root {
   --font-size: 15px;
   --font-medical-display: "Aptos Narrow", "Aptos", "IBM Plex Sans", "Segoe UI", sans-serif;
-  --background: #f6f9fc;
-  --foreground: #22394d;
-  --card: #fbfdff;
-  --card-foreground: #22394d;
-  --popover: #fbfdff;
-  --popover-foreground: #22394d;
-  --primary: #6ea9dc;
+  --background: #f4fafc;
+  --foreground: #1d4051;
+  --card: #fbfeff;
+  --card-foreground: #1d4051;
+  --popover: #fbfeff;
+  --popover-foreground: #1d4051;
+  --primary: #2f9fcb;
   --primary-foreground: #ffffff;
-  --secondary: #eff4f9;
-  --secondary-foreground: #2d465b;
-  --muted: #eef3f8;
-  --muted-foreground: #6d8094;
-  --accent: #f1f5fa;
-  --accent-foreground: #2b465d;
+  --secondary: #eaf5fa;
+  --secondary-foreground: #23495c;
+  --muted: #eef7fb;
+  --muted-foreground: #678395;
+  --accent: #edf8fc;
+  --accent-foreground: #21495d;
   --destructive: #dc2626;
   --destructive-foreground: #ffffff;
-  --border: #dde7f1;
+  --border: #d3e7f0;
   --input: transparent;
-  --input-background: #fbfdff;
-  --switch-background: #d1dce7;
+  --input-background: #fcfeff;
+  --switch-background: #cadde8;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --ring: #94bfe3;
-  --chart-1: #6ea9dc;
-  --chart-2: #629dcf;
-  --chart-3: #568fbf;
-  --chart-4: #84bae6;
-  --chart-5: #a2cfee;
-  --radius: 10px;
-  --sidebar: #fbfdff;
-  --sidebar-foreground: #22394d;
-  --sidebar-primary: #6ea9dc;
+  --ring: #7cc9e4;
+  --chart-1: #2f9fcb;
+  --chart-2: #258cb5;
+  --chart-3: #1f7698;
+  --chart-4: #61bbdf;
+  --chart-5: #95d8ef;
+  --radius: 8px;
+  --sidebar: #fbfeff;
+  --sidebar-foreground: #1d4051;
+  --sidebar-primary: #2f9fcb;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #f1f5fa;
-  --sidebar-accent-foreground: #22394d;
-  --sidebar-border: #dde7f1;
-  --sidebar-ring: #94bfe3;
+  --sidebar-accent: #edf8fc;
+  --sidebar-accent-foreground: #1d4051;
+  --sidebar-border: #d3e7f0;
+  --sidebar-ring: #7cc9e4;
 }
 
 .dark {
   --background: #252525;
-  --foreground: #edf1f3;
-  --card: #2b2d2f;
-  --card-foreground: #edf1f3;
-  --popover: #2b2d2f;
-  --popover-foreground: #edf1f3;
-  --primary: #8eb0b7;
-  --primary-foreground: #182226;
-  --secondary: #313436;
-  --secondary-foreground: #e7edef;
-  --muted: #2f3234;
-  --muted-foreground: #aab3b7;
-  --accent: #35383a;
-  --accent-foreground: #edf1f3;
+  --foreground: #eef6f8;
+  --card: #2a2d30;
+  --card-foreground: #eef6f8;
+  --popover: #2a2d30;
+  --popover-foreground: #eef6f8;
+  --primary: #67bddb;
+  --primary-foreground: #102028;
+  --secondary: #30353a;
+  --secondary-foreground: #e7f1f4;
+  --muted: #2f3539;
+  --muted-foreground: #a6b7bf;
+  --accent: #343a3f;
+  --accent-foreground: #eef6f8;
   --destructive: #c95f5f;
   --destructive-foreground: #fff1f1;
-  --border: #3f4447;
-  --input: #35393b;
-  --input-background: #303335;
-  --switch-background: #555b5e;
-  --ring: #8eb0b7;
+  --border: #3d474d;
+  --input: #34393d;
+  --input-background: #2f3438;
+  --switch-background: #55626a;
+  --ring: #6bc4e2;
   --font-weight-medium: 500;
   --font-weight-normal: 400;
-  --chart-1: #8eb0b7;
-  --chart-2: #7aa0a8;
-  --chart-3: #678992;
-  --chart-4: #a8c2c8;
-  --chart-5: #c2d4d8;
-  --sidebar: #292c2e;
-  --sidebar-foreground: #edf1f3;
-  --sidebar-primary: #8eb0b7;
-  --sidebar-primary-foreground: #182226;
-  --sidebar-accent: #35383a;
-  --sidebar-accent-foreground: #edf1f3;
-  --sidebar-border: #3f4447;
-  --sidebar-ring: #8eb0b7;
+  --chart-1: #67bddb;
+  --chart-2: #53aac9;
+  --chart-3: #4294b1;
+  --chart-4: #8fd0e6;
+  --chart-5: #b7e2f0;
+  --sidebar: #292d30;
+  --sidebar-foreground: #eef6f8;
+  --sidebar-primary: #67bddb;
+  --sidebar-primary-foreground: #102028;
+  --sidebar-accent: #343a3f;
+  --sidebar-accent-foreground: #eef6f8;
+  --sidebar-border: #3d474d;
+  --sidebar-ring: #6bc4e2;
 }
 
 @theme inline {
@@ -193,6 +193,46 @@
   .rounded-xl,
   .rounded-2xl,
   .rounded-3xl {
+    border-radius: 8px !important;
+  }
+
+  .rounded-\[32px\] {
+    border-radius: 22px !important;
+  }
+
+  .rounded-\[28px\] {
+    border-radius: 20px !important;
+  }
+
+  .rounded-\[24px\] {
+    border-radius: 17px !important;
+  }
+
+  .rounded-\[22px\] {
+    border-radius: 16px !important;
+  }
+
+  .rounded-\[20px\] {
+    border-radius: 14px !important;
+  }
+
+  .rounded-\[18px\] {
+    border-radius: 13px !important;
+  }
+
+  .rounded-\[16px\] {
+    border-radius: 12px !important;
+  }
+
+  .rounded-\[14px\] {
     border-radius: 10px !important;
+  }
+
+  .rounded-\[12px\] {
+    border-radius: 9px !important;
+  }
+
+  .rounded-\[10px\] {
+    border-radius: 8px !important;
   }
 }

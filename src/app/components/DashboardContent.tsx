@@ -24,8 +24,10 @@ const periodLabels: Record<DashboardPeriod, string> = {
 export function DashboardContent() {
   const navigate = useNavigate();
   const {
+    addTaskItem,
     appointments,
     bootstrapError,
+    deleteTaskItem,
     isBootstrapping,
     patients,
     profile,
@@ -234,9 +236,9 @@ export function DashboardContent() {
           <div>
             <TasksList
               tasks={tasks}
-              onToggle={(taskId) => {
-                void toggleTaskState(taskId);
-              }}
+              onCreate={addTaskItem}
+              onToggle={toggleTaskState}
+              onDelete={deleteTaskItem}
             />
           </div>
         </div>

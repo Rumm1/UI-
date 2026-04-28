@@ -48,14 +48,14 @@ const severityMeta: Record<NotificationSeverity, NotificationSeverityMeta> = {
     label: "Обычный",
     icon: Bell,
     badgeClassName:
-      "border-primary/20 bg-primary/10 text-primary dark:border-primary/30 dark:bg-primary/[0.14] dark:text-primary",
+      "border-sky-300/80 bg-sky-100/90 text-sky-900 dark:border-sky-800/70 dark:bg-sky-950/40 dark:text-sky-200",
     iconShellClassName:
-      "bg-primary/12 text-primary dark:bg-primary/[0.18] dark:text-primary",
-    iconClassName: "text-primary",
+      "bg-sky-100 text-sky-700 dark:bg-sky-950/45 dark:text-sky-200",
+    iconClassName: "text-sky-700 dark:text-sky-200",
     toastClassName:
-      "border-primary/20 bg-white/95 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.32)] dark:border-primary/20 dark:bg-[#2b2d2f]/95",
+      "border-sky-200/80 bg-white/95 shadow-[0_18px_40px_-28px_rgba(15,23,42,0.32)] dark:border-sky-800/40 dark:bg-[#2b2d2f]/95",
     unreadClassName:
-      "border-primary/35 bg-primary/[0.08] dark:border-primary/35 dark:bg-primary/[0.16]",
+      "border-sky-300/80 bg-sky-50/95 dark:border-sky-800/60 dark:bg-sky-950/[0.28]",
   },
   LOW: {
     label: "Низкий",

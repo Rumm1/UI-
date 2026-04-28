@@ -9,10 +9,12 @@ import {
 } from "react";
 import { toast } from "sonner";
 import {
+  createTask as createTaskAction,
   createAppointment as createAppointmentAction,
   createMedicalRecord as createMedicalRecordAction,
   createPatient as createPatientAction,
   createPrescription as createPrescriptionAction,
+  deleteTask as deleteTaskAction,
   deletePrescription as deletePrescriptionAction,
   describeAppointmentStatus,
   loadPrototypeSnapshot,
@@ -38,6 +40,7 @@ import {
   NewMedicalRecordInput,
   NewPatientInput,
   NewPrescriptionInput,
+  NewTaskInput,
   Patient,
   Prescription,
   ProfileSettings,
@@ -58,6 +61,7 @@ const emptySnapshot: PrototypeSnapshot = {
     lastName: "",
     fullName: "",
     initials: "",
+    avatarPreset: "user",
     role: "",
     specialty: "",
     email: "",
@@ -65,6 +69,7 @@ const emptySnapshot: PrototypeSnapshot = {
     clinic: "",
     licenseNumber: "",
     bio: "",
+    passwordUpdatedAt: null,
     theme: "light",
     language: "ru",
     interfaceMode: "desktop",
@@ -110,7 +115,9 @@ interface AppDataContextValue extends PrototypeSnapshot {
       emitNotification?: boolean;
     },
   ) => Promise<ProfileSettings>;
+  addTaskItem: (input: NewTaskInput) => Promise<TaskItem>;
   toggleTaskState: (taskId: string) => Promise<TaskItem>;
+  deleteTaskItem: (taskId: string) => Promise<void>;
   markNotificationRead: (notificationId: string) => Promise<void>;
   markAllRead: () => Promise<void>;
   resetDemoData: () => Promise<void>;
@@ -191,7 +198,13 @@ function buildReminderCandidate(snapshot: PrototypeSnapshot) {
     };
   }
 
-  const nextTask = snapshot.tasks.find((item) => !item.completed);
+  const nextTask =
+    [...snapshot.tasks]
+      .filter((item) => !item.completed)
+      .sort(
+        (left, right) =>
+          new Date(left.dueAt).getTime() - new Date(right.dueAt).getTime(),
+      )[0] ?? null;
 
   if (!nextTask) {
     return null;
@@ -580,6 +593,21 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     return nextProfile;
   }
 
+  async function addTaskItem(input: NewTaskInput) {
+    const task = await createTaskAction(input);
+
+    setSnapshot((current) => ({
+      ...current,
+      tasks: [task, ...current.tasks],
+    }));
+
+    toast.success("Задача добавлена", {
+      description: `Новая задача "${task.title}" появилась в рабочем списке.`,
+    });
+
+    return task;
+  }
+
   async function toggleTaskState(taskId: string) {
     const nextTask = await toggleTask(taskId);
 
@@ -589,6 +617,19 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     }));
 
     return nextTask;
+  }
+
+  async function deleteTaskItem(taskId: string) {
+    const removedTask = await deleteTaskAction(taskId);
+
+    setSnapshot((current) => ({
+      ...current,
+      tasks: current.tasks.filter((item) => item.id !== taskId),
+    }));
+
+    toast.success("Задача удалена", {
+      description: `"${removedTask.title}" больше не отображается в списке.`,
+    });
   }
 
   async function markNotificationRead(notificationId: string) {
@@ -644,7 +685,9 @@ export function AppDataProvider({ children }: { children: ReactNode }) {
     savePrescription,
     deletePrescription,
     saveProfile,
+    addTaskItem,
     toggleTaskState,
+    deleteTaskItem,
     markNotificationRead,
     markAllRead,
     resetDemoData,
