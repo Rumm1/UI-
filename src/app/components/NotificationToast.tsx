@@ -56,7 +56,7 @@ export function NotificationToast({
   return (
     <div
       ref={rootRef}
-      className={`fixed bottom-6 right-6 z-[60] w-[min(420px,calc(100vw-32px))] overflow-hidden rounded-[14px] border backdrop-blur ${severity.toastClassName}`}
+      className={`fixed right-6 top-6 z-[60] w-[min(420px,calc(100vw-32px))] overflow-hidden rounded-[14px] border backdrop-blur ${severity.toastClassName}`}
     >
       <div className="flex items-start gap-3 p-4">
         <div

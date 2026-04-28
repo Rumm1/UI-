@@ -176,9 +176,11 @@ export function SettingsPage() {
             <Skeleton className="h-8 w-52 rounded-xl" />
             <Skeleton className="h-4 w-72 rounded-xl" />
           </div>
-          <div className="mt-6 grid gap-6 lg:grid-cols-[0.9fr_1.3fr]">
-            <Skeleton className="h-[720px] rounded-3xl" />
-            <Skeleton className="h-[720px] rounded-3xl" />
+          <div className="mt-6 rounded-3xl border border-border bg-card p-6">
+            <div className="grid gap-6 lg:grid-cols-[0.9fr_1.3fr]">
+              <Skeleton className="h-[640px] rounded-2xl" />
+              <Skeleton className="h-[820px] rounded-2xl" />
+            </div>
           </div>
         </div>
       </main>
@@ -196,8 +198,9 @@ export function SettingsPage() {
           </p>
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[0.9fr_1.3fr]">
-          <section className="rounded-3xl border border-border bg-card p-6">
+        <section className="overflow-hidden rounded-3xl border border-border bg-card">
+          <div className="grid lg:grid-cols-[0.9fr_1.3fr]">
+            <aside className="border-b border-border p-6 lg:border-b-0 lg:border-r">
             <div className="mb-6 flex items-center gap-4 border-b border-border pb-6">
               <div className="flex size-20 items-center justify-center rounded-full bg-primary/10 text-2xl font-semibold text-primary">
                 {form.initials}
@@ -224,9 +227,9 @@ export function SettingsPage() {
                 </div>
               </button>
 
-              <div className="overflow-hidden rounded-[10px] border border-sky-200/50 bg-linear-to-br from-sky-500/[0.05] via-card to-primary/[0.1] p-4 dark:border-sky-400/15 dark:from-sky-400/[0.05] dark:to-sky-500/[0.12]">
+              <div className="overflow-hidden rounded-[10px] border border-primary/15 bg-linear-to-br from-primary/[0.05] via-card to-primary/[0.12] p-4 dark:border-primary/15 dark:from-primary/[0.06] dark:to-primary/[0.12]">
                 <div className="mb-4 flex items-start gap-3">
-                  <div className="flex size-10 items-center justify-center rounded-[10px] bg-background/90 text-primary shadow-sm ring-1 ring-sky-200/40 dark:bg-background/60 dark:ring-sky-400/20">
+                  <div className="flex size-10 items-center justify-center rounded-[10px] bg-background/90 text-primary shadow-sm ring-1 ring-primary/15 dark:bg-background/60 dark:ring-primary/20">
                     <Globe className="size-4" />
                   </div>
                   <div>
@@ -239,7 +242,7 @@ export function SettingsPage() {
                 </div>
 
                 <div className="grid gap-3 md:grid-cols-2">
-                  <div className="rounded-[10px] border border-white/50 bg-background/75 p-3 shadow-sm dark:border-white/8 dark:bg-background/35">
+                  <div className="rounded-[10px] border border-border/70 bg-background/75 p-3 shadow-sm dark:border-border dark:bg-background/40">
                     <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                       <Languages className="size-3.5" />
                       Язык
@@ -263,7 +266,7 @@ export function SettingsPage() {
                     </Select>
                   </div>
 
-                  <div className="rounded-[10px] border border-white/50 bg-background/75 p-3 shadow-sm dark:border-white/8 dark:bg-background/35">
+                  <div className="rounded-[10px] border border-border/70 bg-background/75 p-3 shadow-sm dark:border-border dark:bg-background/40">
                     <div className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.16em] text-muted-foreground">
                       <Palette className="size-3.5" />
                       Тема
@@ -366,9 +369,9 @@ export function SettingsPage() {
                 </AlertDialog>
               </div>
             </div>
-          </section>
+          </aside>
 
-          <section className="rounded-3xl border border-border bg-card p-6">
+            <section className="p-6">
             <div className="mb-6 flex items-center gap-3">
               <UserRound className="size-5 text-primary" />
               <div>
@@ -627,8 +630,9 @@ export function SettingsPage() {
                 {saving ? "Сохраняем..." : "Сохранить настройки"}
               </Button>
             </div>
-          </section>
-        </div>
+            </section>
+          </div>
+        </section>
       </div>
     </main>
   );

@@ -279,7 +279,7 @@ export function AppointmentsPage() {
     {
       label: "Свободно слотов",
       value: freeSlots,
-      tone: "bg-sky-100 text-sky-700",
+      tone: "bg-primary/12 text-primary dark:bg-primary/18 dark:text-primary",
       onClick: () => {
         setCreateDate(currentDate);
         setCreateTime("10:00");
@@ -361,7 +361,7 @@ export function AppointmentsPage() {
             <button
               key={item.label}
               onClick={item.onClick}
-              className="font-medical-display flex h-[62px] items-center justify-between gap-3 rounded-[10px] border border-border bg-card px-4 py-3 text-left transition-colors hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
+              className="font-medical-display flex h-[62px] items-center justify-between gap-3 rounded-[10px] border border-border bg-card px-4 py-3 text-left transition-colors hover:border-primary/25 hover:bg-primary/[0.04] dark:hover:border-primary/20 dark:hover:bg-primary/[0.08]"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <div
@@ -394,12 +394,12 @@ export function AppointmentsPage() {
               </div>
               <div className="flex items-center gap-2">
                 <div className="flex items-center gap-1 rounded-[10px] bg-muted p-1">
-                  <button onClick={() => setViewMode("day")} className={`rounded-[10px] border px-4 py-2 text-sm transition-all duration-200 ease-out ${viewMode === "day" ? "border-sky-300/55 bg-sky-500/10 text-sky-900 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50" : "border-transparent text-muted-foreground hover:border-sky-300/35 hover:bg-sky-500/[0.05] hover:text-foreground dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>День</button>
-                  <button onClick={() => setViewMode("week")} className={`rounded-[10px] border px-4 py-2 text-sm transition-all duration-200 ease-out ${viewMode === "week" ? "border-sky-300/55 bg-sky-500/10 text-sky-900 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50" : "border-transparent text-muted-foreground hover:border-sky-300/35 hover:bg-sky-500/[0.05] hover:text-foreground dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>Неделя</button>
+                  <button onClick={() => setViewMode("day")} className={`rounded-[10px] border px-4 py-2 text-sm transition-all duration-200 ease-out ${viewMode === "day" ? "border-primary/35 bg-primary/10 text-foreground shadow-[0_10px_24px_-20px_rgba(45,70,91,0.16)] dark:border-primary/25 dark:bg-primary/10 dark:text-foreground dark:shadow-[0_10px_24px_-20px_rgba(142,176,183,0.22)]" : "border-transparent text-muted-foreground hover:border-primary/25 hover:bg-primary/[0.05] hover:text-foreground dark:hover:border-primary/20 dark:hover:bg-primary/[0.08]"}`}>День</button>
+                  <button onClick={() => setViewMode("week")} className={`rounded-[10px] border px-4 py-2 text-sm transition-all duration-200 ease-out ${viewMode === "week" ? "border-primary/35 bg-primary/10 text-foreground shadow-[0_10px_24px_-20px_rgba(45,70,91,0.16)] dark:border-primary/25 dark:bg-primary/10 dark:text-foreground dark:shadow-[0_10px_24px_-20px_rgba(142,176,183,0.22)]" : "border-transparent text-muted-foreground hover:border-primary/25 hover:bg-primary/[0.05] hover:text-foreground dark:hover:border-primary/20 dark:hover:bg-primary/[0.08]"}`}>Неделя</button>
                 </div>
                 <Button
                   variant="outline"
-                  className={`rounded-[10px] transition-all duration-200 ease-out ${isSameDay(currentDate, new Date()) ? "border-sky-300/55 bg-sky-500/10 text-sky-900 hover:bg-sky-500/10 hover:text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50 dark:hover:bg-sky-400/10 dark:hover:text-sky-50" : "border-border"}`}
+                  className={`rounded-[10px] transition-all duration-200 ease-out ${isSameDay(currentDate, new Date()) ? "border-primary/35 bg-primary/10 text-foreground hover:bg-primary/10 hover:text-foreground dark:border-primary/25 dark:bg-primary/10 dark:text-foreground dark:hover:bg-primary/10 dark:hover:text-foreground" : "border-border"}`}
                   onClick={() => focusDate(new Date(), "day")}
                 >
                   Сегодня
@@ -423,11 +423,11 @@ export function AppointmentsPage() {
                       onClick={() => focusDate(date, "day")}
                       className={`min-w-[108px] rounded-[10px] border px-4 py-2.5 text-left transition-all duration-200 ease-out ${
                         isActiveDate
-                          ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10"
-                          : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.05] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
+                          ? "border-primary/35 bg-primary/10 shadow-[0_10px_24px_-20px_rgba(45,70,91,0.16)] dark:border-primary/25 dark:bg-primary/10 dark:shadow-[0_10px_24px_-20px_rgba(142,176,183,0.22)]"
+                          : "border-border hover:border-primary/25 hover:bg-primary/[0.05] dark:hover:border-primary/20 dark:hover:bg-primary/[0.08]"
                       }`}
                     >
-                      <p className={`text-[11px] uppercase tracking-[0.18em] ${isTodayDate ? "text-sky-700 dark:text-sky-300" : "text-muted-foreground"}`}>
+                      <p className={`text-[11px] uppercase tracking-[0.18em] ${isTodayDate ? "text-primary" : "text-muted-foreground"}`}>
                         {format(date, "EE", { locale: ru })}
                       </p>
                       <p className="mt-1.5 text-[22px] font-semibold tabular-nums leading-none text-foreground">
@@ -445,7 +445,7 @@ export function AppointmentsPage() {
             <div className="mb-5 flex flex-wrap gap-2">
               <Button
                 variant="outline"
-                className={`rounded-[10px] transition-all duration-200 ease-out ${statusFilter === "all" ? "border-sky-300/55 bg-sky-500/10 text-sky-900 hover:bg-sky-500/10 hover:text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50 dark:hover:bg-sky-400/10 dark:hover:text-sky-50" : "border-border"}`}
+                className={`rounded-[10px] transition-all duration-200 ease-out ${statusFilter === "all" ? "border-primary/35 bg-primary/10 text-foreground hover:bg-primary/10 hover:text-foreground dark:border-primary/25 dark:bg-primary/10 dark:text-foreground dark:hover:bg-primary/10 dark:hover:text-foreground" : "border-border"}`}
                 onClick={() => {
                   const next = new URLSearchParams(searchParams);
                   next.delete("status");
@@ -458,7 +458,7 @@ export function AppointmentsPage() {
                 <Button
                   key={status}
                   variant="outline"
-                  className={`rounded-[10px] transition-all duration-200 ease-out ${statusFilter === status ? "border-sky-300/55 bg-sky-500/10 text-sky-900 hover:bg-sky-500/10 hover:text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50 dark:hover:bg-sky-400/10 dark:hover:text-sky-50" : "border-border"}`}
+                  className={`rounded-[10px] transition-all duration-200 ease-out ${statusFilter === status ? "border-primary/35 bg-primary/10 text-foreground hover:bg-primary/10 hover:text-foreground dark:border-primary/25 dark:bg-primary/10 dark:text-foreground dark:hover:bg-primary/10 dark:hover:text-foreground" : "border-border"}`}
                   onClick={() => {
                     const next = new URLSearchParams(searchParams);
                     next.set("status", status);
@@ -486,7 +486,7 @@ export function AppointmentsPage() {
               <div
                 className={`border-b px-4 pb-2.5 text-center ${
                   isSameDay(currentDate, new Date())
-                    ? "border-sky-300/55 text-sky-900 dark:border-sky-400/25 dark:text-sky-50"
+                    ? "border-primary/35 text-primary dark:border-primary/25 dark:text-primary"
                     : "border-border text-foreground"
                 }`}
               >
@@ -518,7 +518,7 @@ export function AppointmentsPage() {
                             setCreateOpen(true);
                           }
                         }}
-                        className={`min-h-[52px] rounded-[10px] border px-3 py-2 text-left transition-all duration-200 ease-out ${appointment ? isSelectedAppointment ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-sky-200/45 bg-sky-500/[0.05] hover:bg-sky-500/[0.08] dark:border-sky-400/18 dark:bg-sky-400/[0.06] dark:hover:bg-sky-400/[0.1]" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}
+                        className={`min-h-[52px] rounded-[10px] border px-3 py-2 text-left transition-all duration-200 ease-out ${appointment ? isSelectedAppointment ? "border-primary/35 bg-primary/10 shadow-[0_10px_24px_-20px_rgba(45,70,91,0.16)] dark:border-primary/25 dark:bg-primary/10 dark:shadow-[0_10px_24px_-20px_rgba(142,176,183,0.22)]" : "border-primary/20 bg-primary/[0.05] hover:bg-primary/[0.08] dark:border-primary/15 dark:bg-primary/[0.06] dark:hover:bg-primary/[0.1]" : "border-border hover:border-primary/25 hover:bg-primary/[0.04] dark:hover:border-primary/20 dark:hover:bg-primary/[0.08]"}`}
                       >
                         {appointment ? (
                           <div className="flex items-center justify-between gap-3">
@@ -562,7 +562,7 @@ export function AppointmentsPage() {
                     </div>
                     <div className="mt-6 grid grid-cols-2 gap-2">
                       {(["confirmed", "pending", "completed", "cancelled"] as AppointmentStatus[]).map((status) => (
-                        <Button key={status} variant="outline" className={`rounded-[10px] transition-all duration-200 ease-out ${selectedAppointment.status === status ? "border-sky-300/55 bg-sky-500/10 text-sky-900 hover:bg-sky-500/10 hover:text-sky-900 dark:border-sky-400/25 dark:bg-sky-400/10 dark:text-sky-50 dark:hover:bg-sky-400/10 dark:hover:text-sky-50" : "border-border"}`} disabled={statusUpdateLoading} onClick={() => { void handleStatusChange(status); }}>{appointmentStatusLabels[status]}</Button>
+                        <Button key={status} variant="outline" className={`rounded-[10px] transition-all duration-200 ease-out ${selectedAppointment.status === status ? "border-primary/35 bg-primary/10 text-foreground hover:bg-primary/10 hover:text-foreground dark:border-primary/25 dark:bg-primary/10 dark:text-foreground dark:hover:bg-primary/10 dark:hover:text-foreground" : "border-border"}`} disabled={statusUpdateLoading} onClick={() => { void handleStatusChange(status); }}>{appointmentStatusLabels[status]}</Button>
                       ))}
                     </div>
                     <div className="mt-6 flex flex-wrap gap-3">

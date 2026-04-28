@@ -121,17 +121,28 @@ export const prescriptionStatusLabels: Record<PrescriptionStatus, string> = {
 };
 
 const statusToneMap: Record<string, string> = {
-  active: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  "follow-up": "border-amber-200 bg-amber-50 text-amber-700",
-  inactive: "border-slate-200 bg-slate-100 text-slate-600",
-  confirmed: "border-cyan-200 bg-cyan-50 text-cyan-700",
-  pending: "border-amber-200 bg-amber-50 text-amber-700",
-  cancelled: "border-rose-200 bg-rose-50 text-rose-700",
-  completed: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  final: "border-emerald-200 bg-emerald-50 text-emerald-700",
-  draft: "border-slate-200 bg-slate-100 text-slate-600",
-  review: "border-violet-200 bg-violet-50 text-violet-700",
-  expired: "border-slate-200 bg-slate-100 text-slate-600",
+  active:
+    "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/55 dark:bg-emerald-950/30 dark:text-emerald-200",
+  "follow-up":
+    "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/55 dark:bg-amber-950/30 dark:text-amber-200",
+  inactive:
+    "border-slate-200 bg-slate-100 text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/35 dark:text-slate-200",
+  confirmed:
+    "border-cyan-200 bg-cyan-50 text-cyan-700 dark:border-cyan-900/55 dark:bg-cyan-950/30 dark:text-cyan-200",
+  pending:
+    "border-amber-200 bg-amber-50 text-amber-700 dark:border-amber-900/55 dark:bg-amber-950/30 dark:text-amber-200",
+  cancelled:
+    "border-rose-200 bg-rose-50 text-rose-700 dark:border-rose-900/55 dark:bg-rose-950/30 dark:text-rose-200",
+  completed:
+    "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/55 dark:bg-emerald-950/30 dark:text-emerald-200",
+  final:
+    "border-emerald-200 bg-emerald-50 text-emerald-700 dark:border-emerald-900/55 dark:bg-emerald-950/30 dark:text-emerald-200",
+  draft:
+    "border-slate-200 bg-slate-100 text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/35 dark:text-slate-200",
+  review:
+    "border-primary/20 bg-primary/10 text-primary dark:border-primary/30 dark:bg-primary/[0.14] dark:text-primary",
+  expired:
+    "border-slate-200 bg-slate-100 text-slate-600 dark:border-slate-700/60 dark:bg-slate-900/35 dark:text-slate-200",
 };
 
 export function getStatusTone(status: string) {

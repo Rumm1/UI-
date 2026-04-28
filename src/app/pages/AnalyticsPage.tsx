@@ -25,11 +25,11 @@ const monthlyData = [
 ];
 
 const diagnosisData = [
-  { name: "Гипертония", value: 145, color: "#40E0D0" },
-  { name: "Диабет", value: 98, color: "#36c9ba" },
-  { name: "Аллергии", value: 87, color: "#2db3a5" },
-  { name: "Гастрит", value: 76, color: "#5fe8d8" },
-  { name: "Прочие", value: 234, color: "#7feee0" },
+  { name: "Гипертония", value: 145, color: "#7faab1" },
+  { name: "Диабет", value: 98, color: "#6c959d" },
+  { name: "Аллергии", value: 87, color: "#597d85" },
+  { name: "Гастрит", value: 76, color: "#97bcc2" },
+  { name: "Прочие", value: 234, color: "#b4d0d4" },
 ];
 
 const ageDistribution = [
@@ -55,7 +55,7 @@ const kpis = [
     trend: "up",
     icon: Users,
     color: "text-primary",
-    bgColor: "bg-primary/10",
+    bgColor: "bg-primary/10 dark:bg-primary/15",
   },
   {
     label: "Записи в месяц",
@@ -63,8 +63,8 @@ const kpis = [
     change: "+8.2%",
     trend: "up",
     icon: Calendar,
-    color: "text-green-600",
-    bgColor: "bg-green-100",
+    color: "text-emerald-700 dark:text-emerald-300",
+    bgColor: "bg-emerald-100 dark:bg-emerald-500/15",
   },
   {
     label: "Средняя загрузка",
@@ -72,8 +72,8 @@ const kpis = [
     change: "+3.1%",
     trend: "up",
     icon: Activity,
-    color: "text-orange-600",
-    bgColor: "bg-orange-100",
+    color: "text-amber-700 dark:text-amber-300",
+    bgColor: "bg-amber-100 dark:bg-amber-500/15",
   },
   {
     label: "Рост за год",
@@ -81,8 +81,8 @@ const kpis = [
     change: "vs прошлый год",
     trend: "up",
     icon: TrendingUp,
-    color: "text-purple-600",
-    bgColor: "bg-purple-100",
+    color: "text-slate-700 dark:text-slate-200",
+    bgColor: "bg-slate-100 dark:bg-slate-500/15",
   },
 ];
 

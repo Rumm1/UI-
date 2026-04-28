@@ -19,7 +19,7 @@ export function StatsCards({ items }: StatsCardsProps) {
         <button
           key={item.id}
           onClick={item.onClick}
-          className="font-medical-display flex h-[62px] items-center justify-between gap-3 rounded-[10px] border border-border bg-card px-4 py-3 text-left transition-colors hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
+          className="font-medical-display flex h-[62px] items-center justify-between gap-3 rounded-[10px] border border-border bg-card px-4 py-3 text-left transition-colors hover:border-primary/25 hover:bg-primary/[0.04] dark:hover:border-primary/20 dark:hover:bg-primary/[0.08]"
         >
           <div className="flex min-w-0 items-center gap-3">
             <div

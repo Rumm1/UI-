@@ -275,7 +275,7 @@ export function PrescriptionsPage() {
             <button
               key={item.label}
               onClick={item.onClick}
-              className="font-medical-display flex h-[62px] items-center justify-between gap-3 rounded-[10px] border border-border bg-card px-4 py-3 text-left transition-colors hover:border-sky-300/35 hover:bg-sky-500/[0.04] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"
+              className="font-medical-display flex h-[62px] items-center justify-between gap-3 rounded-[10px] border border-border bg-card px-4 py-3 text-left transition-colors hover:border-primary/25 hover:bg-primary/[0.04] dark:hover:border-primary/20 dark:hover:bg-primary/[0.08]"
             >
               <div className="flex min-w-0 items-center gap-3">
                 <div className={`flex size-9 shrink-0 items-center justify-center rounded-[10px] ${item.tone}`}>
@@ -306,7 +306,7 @@ export function PrescriptionsPage() {
                 {filteredPrescriptions.map((item) => {
                   const patient = getPatientById(patients, item.patientId);
                   return (
-                    <button key={item.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("prescription", item.id); setSearchParams(next); }} className={`w-full rounded-[10px] border p-4 text-left transition-all duration-200 ease-out ${selectedPrescription?.id === item.id ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.05] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>
+                    <button key={item.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("prescription", item.id); setSearchParams(next); }} className={`w-full rounded-[10px] border p-4 text-left transition-all duration-200 ease-out ${selectedPrescription?.id === item.id ? "border-primary/35 bg-primary/10 shadow-[0_10px_24px_-20px_rgba(45,70,91,0.16)] dark:border-primary/25 dark:bg-primary/10 dark:shadow-[0_10px_24px_-20px_rgba(142,176,183,0.22)]" : "border-border hover:border-primary/25 hover:bg-primary/[0.05] dark:hover:border-primary/20 dark:hover:bg-primary/[0.08]"}`}>
                       <div className="mb-2 flex items-center justify-between gap-3"><div><p className="text-[13px] font-medium text-foreground">{item.medication}</p><p className="text-[13px] text-muted-foreground">{patient?.fullName}</p></div><StatusBadge label={prescriptionStatusLabels[item.status]} status={item.status} /></div>
                       <p className="text-[13px] text-muted-foreground">{item.dosage} • {item.frequency}</p>
                     </button>

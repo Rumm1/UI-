@@ -115,7 +115,7 @@ export function NotificationDropdown() {
       >
         <Bell className="size-5 text-foreground" />
         {unreadCount > 0 ? (
-          <span className="absolute right-1 top-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold text-white">
+          <span className="absolute right-1 top-1 flex min-h-[18px] min-w-[18px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-semibold text-white dark:bg-rose-900/90 dark:text-rose-100">
             {unreadCount > 9 ? "9+" : unreadCount}
           </span>
         ) : null}
@@ -182,7 +182,7 @@ export function NotificationDropdown() {
                     className={`w-full border-b px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-accent/40 ${
                       notification.is_read
                         ? "border-border bg-card"
-                        : `${severity.unreadClassName} border-border`
+                        : severity.unreadClassName
                     }`}
                   >
                     <div className="flex items-start gap-3">

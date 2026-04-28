@@ -171,7 +171,7 @@ export function MedicalRecordDetailPage() {
                       </div>
                       <Badge
                         variant="outline"
-                        className="rounded-[10px] border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-700"
+                        className="rounded-[10px] border-emerald-200 bg-emerald-50 px-2.5 py-1 text-emerald-700 dark:border-emerald-900/55 dark:bg-emerald-950/30 dark:text-emerald-200"
                       >
                         {item.status}
                       </Badge>

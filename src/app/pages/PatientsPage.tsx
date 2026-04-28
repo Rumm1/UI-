@@ -295,7 +295,7 @@ export function PatientsPage() {
                 {filteredPatients.map((patient) => {
                   const nextForPatient = getPatientNextAppointment(patient.id, appointments);
                   return (
-                    <button key={patient.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("patient", patient.id); setSearchParams(next); }} className={`w-full rounded-[10px] border p-4 text-left transition-all duration-200 ease-out ${selectedPatient?.id === patient.id ? "border-sky-300/55 bg-sky-500/10 shadow-[0_10px_24px_-18px_rgba(14,165,233,0.85)] dark:border-sky-400/25 dark:bg-sky-400/10" : "border-border hover:border-sky-300/35 hover:bg-sky-500/[0.05] dark:hover:border-sky-400/20 dark:hover:bg-sky-400/[0.08]"}`}>
+                    <button key={patient.id} onClick={() => { const next = new URLSearchParams(searchParams); next.set("patient", patient.id); setSearchParams(next); }} className={`w-full rounded-[10px] border p-4 text-left transition-all duration-200 ease-out ${selectedPatient?.id === patient.id ? "border-primary/35 bg-primary/10 shadow-[0_10px_24px_-20px_rgba(45,70,91,0.16)] dark:border-primary/25 dark:bg-primary/10 dark:shadow-[0_10px_24px_-20px_rgba(142,176,183,0.22)]" : "border-border hover:border-primary/25 hover:bg-primary/[0.05] dark:hover:border-primary/20 dark:hover:bg-primary/[0.08]"}`}>
                       <div className="mb-3 flex items-start justify-between gap-3">
                         <div className="flex items-center gap-3">
                           <div className="flex size-12 items-center justify-center rounded-[12px] bg-primary/10 text-sm font-semibold text-primary">{patient.initials}</div>

@@ -6,3 +6,6 @@ Thumbs.db
 .vscode/
 vite-dev.log
 vite-dev.err.log
+vite-dev-*.log
+vite-dev-*.err.log
+rfr/

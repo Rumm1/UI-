@@ -289,7 +289,7 @@ export function NotificationsPage() {
                   className={`w-full rounded-[14px] border p-4 text-left transition-colors hover:bg-accent/40 ${
                     notification.is_read
                       ? "border-border bg-card"
-                      : `${severity.unreadClassName} border-border`
+                      : severity.unreadClassName
                   }`}
                 >
                   <div className="flex gap-4">

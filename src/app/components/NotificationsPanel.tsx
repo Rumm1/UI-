@@ -48,7 +48,7 @@ export function NotificationsPanel({ notifications }: NotificationsPanelProps) {
                 className={`flex w-full gap-3 rounded-2xl border p-4 text-left transition-colors hover:bg-accent/50 ${
                   notification.is_read
                     ? "border-border bg-card"
-                    : `${severity.unreadClassName} border-border`
+                    : severity.unreadClassName
                 }`}
               >
                 <div

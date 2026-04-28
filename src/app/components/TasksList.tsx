@@ -9,9 +9,9 @@ interface TasksListProps {
 }
 
 const priorityClasses: Record<TaskItem["priority"], string> = {
-  high: "bg-rose-100 text-rose-700",
-  medium: "bg-amber-100 text-amber-700",
-  low: "bg-slate-100 text-slate-600",
+  high: "bg-rose-100 text-rose-700 dark:bg-rose-950/30 dark:text-rose-200",
+  medium: "bg-amber-100 text-amber-700 dark:bg-amber-950/30 dark:text-amber-200",
+  low: "bg-slate-100 text-slate-600 dark:bg-slate-900/35 dark:text-slate-200",
 };
 
 const priorityLabels: Record<TaskItem["priority"], string> = {
